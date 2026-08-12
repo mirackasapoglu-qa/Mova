@@ -314,6 +314,54 @@ Bunlar parametrelenirse 161 path → 159'a iner ve negatif örnekler ilgili
 parametreli operasyonun dokümante 404/400 yanıtlarını zenginleştirir.
 `contract/postman_to_openapi.py` içinde normalize edilmeli.
 
+## C7. Doğrulanmamış `sortOrder` servisi çökertiyor + kaynak kod sızıntısı — KRİTİK
+
+`GET /v1/customers?sortBy=id&sortOrder=yukari` → **HTTP 500**
+
+Geçersiz enum değeri doğrulanmadan Prisma'ya geçiyor. Yanıt gövdesi (712 karakter)
+sunucunun iç yapısını olduğu gibi istemciye veriyor:
+
+```
+Invalid `this.prisma.customer.findMany()` invocation in
+/root/opras-development/opras-crm-service/src/customers/customers.service.ts:61:28
+
+  58 if (filters?.customerType) where.customerType = filters.customerType;
+  → 61   this.prisma.customer.findMany({
+           where: { tenantId: "00000000-0000-0000-0000-000000000001", deletedAt: null },
+```
+
+**İki ayrı kusur:**
+
+1. **Girdi doğrulama yok** — `sortOrder` bir enum (`asc`/`desc`) olmalı; kabul edilmeyen
+   değer 400 ile reddedilmeli, servis çökmemeli. Bir istemci hatası tüm isteği 500'e
+   çeviriyor.
+2. **Bilgi ifşası** — yanıt mutlak dosya yolunu, kaynak kod satırlarını, ORM sorgusunu
+   ve tenant kimliğini sızdırıyor. Ayrıca yol (`/root/...`) servisin **root** kullanıcısı
+   ile koştuğunu gösteriyor. Üretimde bu gövde istemciye asla dönmemeli; genel bir
+   hata mesajı + `correlationId` yeterli.
+
+Testler: `test_boundary.py::test_invalid_sorting_is_rejected_not_crashing[gecersiz sortOrder]`
+ve `test_security.py::test_server_error_does_not_leak_source_code` — ikisi de `xfail`
+olarak izleniyor, düzeltilince `XPASS` verip görünür olacak.
+
+> Not: `sortBy=gecersizAlan` ve `sortBy=id; DROP TABLE` **çökmüyor** — yalnızca
+> `sortOrder` yolunda doğrulama eksik.
+
+## C8. Güvenlik başlıkları eksik, parmak izi başlığı var
+
+`GET /v1/auth/me` yanıt başlıkları:
+
+| Başlık | Durum |
+|---|---|
+| `X-Content-Type-Options: nosniff` | **yok** |
+| `Strict-Transport-Security` | **yok** |
+| `X-Powered-By` | **var** — sunucu teknolojisini ifşa ediyor |
+
+İlk ikisi MIME-sniffing ve protokol düşürme saldırılarına karşı temel korumadır.
+`X-Powered-By` kaldırılmalı (NestJS/Express'te tek satır: `app.disable('x-powered-by')`).
+
+Test: `test_security.py::test_security_headers` (`xfail`).
+
 ## Açık sorular
 
 - **Canlı ortam adresi** — `BASE_URL` henüz tanımlı değil; canlı koşum yapılamadı.

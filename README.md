@@ -75,6 +75,12 @@ gerektiren testler **skip** edilir — sessizce PASS geçmez.
 | `test_spec_sync.py` | **Ağsız.** endpoints↔spec senkronu, envelope tutarlılığı, baseline bekçiliği |
 | `test_auth.py` | Tokensiz erişim, validation reddi, bilinmeyen hesap davranışı |
 | `test_smoke.py` | `/auth/me`, çekirdek liste uçları, sayfalama, geçersiz token reddi |
+| `test_security.py` | JWT kurcalama, tenant izolasyonu (BOLA), enjeksiyon, bilgi sızıntısı, güvenlik başlıkları |
+| `test_boundary.py` | Sayfalama sınırları, bozuk parametre, uzun/unicode girdi, geçersiz sıralama |
+| `test_request_activities.py` | TP-797 kabul kriterleri (8 aksiyon metin şablonu + alan sözleşmesi) |
+
+Güvenlik ve sınır testlerinin tamamı **salt-okunur**; hiçbiri mutating istek atmaz ve
+OTP hız sınırına dokunmaz. Temel değişmez: geçersiz girdi **4xx** üretmeli, 5xx değil.
 
 ## Contract Testing (Schemathesis)
 
