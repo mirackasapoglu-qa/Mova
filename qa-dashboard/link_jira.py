@@ -41,6 +41,7 @@ except ImportError:
 HERE = pathlib.Path(__file__).parent
 ROOT = HERE.parent
 REGISTRY = HERE / "registry.json"
+JIRA_CARDS = HERE / "jira_cards.json"
 UNMATCHED_REPORT = ROOT / "reports" / "jira-unmatched.md"
 
 JIRA_BASE = (os.getenv("JIRA_BASE") or "").rstrip("/")
@@ -157,30 +158,40 @@ def main():
     unmatched = Counter()              # eslesmeyen sekil -> kac kart
     unmatched_examples = defaultdict(set)
     with_endpoint = matched_cards = 0
+    jira_cards = []                    # kart merkezli gorunum icin
 
     for issue in issues:
-        endpoints = extract_endpoints(issue)
-        if not endpoints:
-            continue
-        with_endpoint += 1
         fields = issue["fields"]
         entry = {
             "key": issue["key"],
             "summary": fields.get("summary", ""),
             "status": (fields.get("status") or {}).get("name", ""),
             "type": (fields.get("issuetype") or {}).get("name", ""),
+            "assignee": (fields.get("assignee") or {}).get("displayName", ""),
+            "parent": (fields.get("parent") or {}).get("key", ""),
         }
+
+        endpoints = extract_endpoints(issue)
+        card_endpoints = []
         hit = False
-        for method, normalized in endpoints:
-            op_keys = index.get((method, normalized))
-            if op_keys:
-                hit = True
-                for op_key in op_keys:
-                    links[op_key].append(entry)
-            else:
-                unmatched[f"{method} {normalized}"] += 1
-                unmatched_examples[f"{method} {normalized}"].add(issue["key"])
-        matched_cards += 1 if hit else 0
+
+        if endpoints:
+            with_endpoint += 1
+            for method, normalized in sorted(endpoints):
+                op_keys = index.get((method, normalized)) or []
+                if op_keys:
+                    hit = True
+                    for op_key in op_keys:
+                        links[op_key].append(entry)
+                else:
+                    unmatched[f"{method} {normalized}"] += 1
+                    unmatched_examples[f"{method} {normalized}"].add(issue["key"])
+                card_endpoints.append({
+                    "method": method, "shape": normalized, "operations": op_keys,
+                })
+            matched_cards += 1 if hit else 0
+
+        jira_cards.append({**entry, "endpoints": card_endpoints, "matched": hit})
 
     total_links = sum(len(v) for v in links.values())
     print(f"\nendpoint gecen kart : {with_endpoint}")
@@ -209,6 +220,14 @@ def main():
         data["_meta"]["jiraLinkedOperations"] = len(links)
         REGISTRY.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"\nOK -> {REGISTRY}")
+
+        # Kart merkezli gorunum: panoda "karttan uca" gezinmek icin
+        JIRA_CARDS.write_text(json.dumps({
+            "_meta": {"base": JIRA_BASE, "jql": args.jql, "total": len(jira_cards),
+                      "withEndpoint": with_endpoint, "matched": matched_cards},
+            "cards": jira_cards,
+        }, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"OK -> {JIRA_CARDS}  ({len(jira_cards)} kart)")
     else:
         print("\n(dry-run — registry yazilmadi)")
 

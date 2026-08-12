@@ -54,6 +54,7 @@ from qa_core.resolver import PathParamResolver, PLACEHOLDER_ID  # noqa: E402
 HERE = pathlib.Path(__file__).parent
 ROOT = HERE.parent
 REGISTRY = HERE / "registry.json"
+JIRA_CARDS = HERE / "jira_cards.json"
 SPEC = ROOT / "contract" / "openapi.json"
 INDEX = HERE / "index.html"
 
@@ -96,6 +97,20 @@ def load_registry():
 
 def load_spec():
     return json.loads(SPEC.read_text(encoding="utf-8")) if SPEC.exists() else {"paths": {}}
+
+
+def load_jira_cards():
+    """qa-dashboard/jira_cards.json — link_jira.py tarafindan uretilir."""
+    if not JIRA_CARDS.exists():
+        return {"_meta": {}, "cards": []}
+    return json.loads(JIRA_CARDS.read_text(encoding="utf-8"))
+
+
+def find_jira_card(key):
+    for card in load_jira_cards().get("cards", []):
+        if card["key"].upper() == key.upper():
+            return card
+    return None
 
 
 def find_card(key):
@@ -302,6 +317,40 @@ class Handler(BaseHTTPRequestHandler):
                 "jiraInTest": sum(1 for j in (c.get("jira") or [])
                                   if j.get("status") in ("Test", "Test Blocked")),
             } for c in cards])
+
+        if self.path == "/api/jira":
+            payload = load_jira_cards()
+            return self._send({
+                "meta": payload.get("_meta", {}),
+                "cards": [{
+                    "key": c["key"], "summary": c["summary"], "status": c["status"],
+                    "type": c["type"], "assignee": c.get("assignee", ""),
+                    "parent": c.get("parent", ""),
+                    "endpointCount": len(c.get("endpoints") or []),
+                    "operationCount": sum(len(e.get("operations") or [])
+                                          for e in (c.get("endpoints") or [])),
+                    "matched": c.get("matched", False),
+                } for c in payload.get("cards", [])],
+            })
+
+        if self.path.startswith("/api/jira/"):
+            key = urllib_unquote(self.path[len("/api/jira/"):])
+            card = find_jira_card(key)
+            if not card:
+                return self._send({"error": "kart bulunamadi"}, 404)
+            # bagli operasyonlarin metot/yol bilgisini ekle
+            registry = {c["key"]: c for c in load_registry().get("cards", [])}
+            enriched = []
+            for endpoint in card.get("endpoints") or []:
+                ops = []
+                for op_key in endpoint.get("operations") or []:
+                    op = registry.get(op_key)
+                    if op:
+                        ops.append({"key": op_key, "method": op["method"],
+                                    "path": op["path"], "service": op["service"],
+                                    "mutating": op["mutating"]})
+                enriched.append({**endpoint, "operations": ops})
+            return self._send({**card, "endpoints": enriched})
 
         if self.path.startswith("/api/card/"):
             key = urllib_unquote(self.path[len("/api/card/"):])

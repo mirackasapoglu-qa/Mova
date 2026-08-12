@@ -15,6 +15,15 @@ Farklı port: `QA_PANEL_PORT=8778 .venv/bin/python qa-dashboard/server.py`
 
 Ortam `.env`'den okunur: `BASE_URL`, `TENANT_ID`, `ACCESS_TOKEN` (opsiyonel).
 
+## İki görünüm
+
+Sağ üstteki **Uçlar / Jira kartları** düğmesiyle panelin ekseni değişir
+(`#jira` hash'i ile doğrudan açılabilir):
+
+- **Uçlar** — sözleşmeden gelen 237 operasyon; her ucun altında onu kapsayan Jira kartları.
+- **Jira kartları** — TP projesindeki 915 kart; statü/tip/eşleşme filtreleri, karttan
+  ilgili uca tek tıkla geçiş (uç görünümüne atlar ve o kartı açar).
+
 ## Ne yapar
 
 - **Sol:** operasyon listesi — path/özet/servis araması, servis + metot filtresi,

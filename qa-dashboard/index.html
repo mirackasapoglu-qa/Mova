@@ -90,6 +90,19 @@
   .st { font-size: 11px; color: var(--dim); white-space: nowrap; }
   .st.hot { color: var(--warn); font-weight: 600; }
   .ty { font-size: 11px; color: var(--dim); white-space: nowrap; }
+  .modes { display: flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .modes .mode { background: transparent; color: var(--dim); border: 0; padding: 5px 12px;
+                 font-size: 12px; border-radius: 0; }
+  .modes .mode.on { background: var(--accent); color: #fff; }
+  .jkey { font-family: var(--mono); font-size: 12px; font-weight: 600; }
+  .jstat { font-size: 10px; padding: 1px 6px; border-radius: 8px;
+           border: 1px solid var(--line); color: var(--dim); white-space: nowrap; }
+  .jstat.hot { color: var(--warn); border-color: var(--warn); }
+  .jstat.done { color: var(--ok); border-color: var(--ok); }
+  .oplink { display: flex; align-items: center; gap: 8px; padding: 6px 8px;
+            border: 1px solid var(--line); border-radius: 6px; margin-bottom: 5px;
+            cursor: pointer; background: var(--bg); }
+  .oplink:hover { border-color: var(--accent); }
   .inline { display: flex; gap: 8px; align-items: center; }
 </style>
 </head>
@@ -99,6 +112,10 @@
   <span class="meta" id="target">—</span>
   <span class="pill" id="authPill">auth ?</span>
   <span class="spacer"></span>
+  <div class="modes">
+    <button class="mode on" data-mode="ep">Uçlar</button>
+    <button class="mode" data-mode="jira">Jira kartları</button>
+  </div>
   <button class="ghost" id="authBtn">Giriş</button>
 </header>
 
@@ -106,7 +123,19 @@
   <div id="list">
     <div id="filters">
       <input id="q" placeholder="ara: path, özet, servis…">
-      <div class="inline">
+      <div class="inline" id="jiraFilters" style="display:none">
+        <select id="jstatus"><option value="">tüm statüler</option></select>
+        <select id="jtype" style="width:130px"><option value="">tüm tipler</option></select>
+      </div>
+      <div class="inline" id="jiraFilters2" style="display:none">
+        <select id="jmatch">
+          <option value="">tümü</option>
+          <option value="1">endpoint'i eşleşenler</option>
+          <option value="0">eşleşmeyenler</option>
+          <option value="none">endpoint geçmeyenler</option>
+        </select>
+      </div>
+      <div class="inline" id="epFilters">
         <select id="svc"><option value="">tüm servisler</option></select>
         <select id="mth" style="width:130px">
           <option value="">tüm metotlar</option>
@@ -126,6 +155,7 @@
 
 <script>
 let CARDS = [], SEL = null, META = {};
+let MODE = "ep", JIRA = [], JSEL = null;
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
@@ -148,7 +178,111 @@ async function boot() {
   const svcs = [...new Set(CARDS.map(c => c.service))].sort();
   $("#svc").innerHTML = '<option value="">tüm servisler</option>'
     + svcs.map(s => `<option>${esc(s)}</option>`).join("");
+
+  const jr = await api("/api/jira");
+  JIRA = jr.cards || [];
+  if (JIRA.length) {
+    const st = [...new Set(JIRA.map(c => c.status))].sort();
+    const ty = [...new Set(JIRA.map(c => c.type))].sort();
+    $("#jstatus").innerHTML = '<option value="">tüm statüler</option>'
+      + st.map(s => `<option>${esc(s)}</option>`).join("");
+    $("#jtype").innerHTML = '<option value="">tüm tipler</option>'
+      + ty.map(s => `<option>${esc(s)}</option>`).join("");
+  }
+  if (location.hash === "#jira") { setMode("jira"); return; }
   render();
+}
+
+function setMode(mode) {
+  MODE = mode;
+  if (location.hash.slice(1) !== mode) history.replaceState(null, "", "#" + mode);
+  document.querySelectorAll(".mode").forEach(b =>
+    b.classList.toggle("on", b.dataset.mode === mode));
+  $("#epFilters").style.display   = mode === "ep" ? "" : "none";
+  $("#jiraFilters").style.display  = mode === "jira" ? "" : "none";
+  $("#jiraFilters2").style.display = mode === "jira" ? "" : "none";
+  $("#q").placeholder = mode === "ep" ? "ara: path, özet, servis…"
+                                      : "ara: TP-123, özet, atanan…";
+  const empty = $("#detail").querySelector(".empty");
+  if (empty) empty.textContent = mode === "ep" ? "Soldan bir endpoint seç."
+                                               : "Soldan bir Jira kartı seç.";
+  render();
+}
+
+function statClass(s) {
+  if (["Test", "Test Blocked"].includes(s)) return "hot";
+  if (["Ready For Release", "Tamam", "Ready For Deploy"].includes(s)) return "done";
+  return "";
+}
+
+function filteredJira() {
+  const q = $("#q").value.toLowerCase().trim();
+  const st = $("#jstatus").value, ty = $("#jtype").value, mt = $("#jmatch").value;
+  return JIRA.filter(c => {
+    if (st && c.status !== st) return false;
+    if (ty && c.type !== ty) return false;
+    if (mt === "1" && !c.matched) return false;
+    if (mt === "0" && !(c.endpointCount && !c.matched)) return false;
+    if (mt === "none" && c.endpointCount) return false;
+    if (q && !(c.key + " " + c.summary + " " + c.assignee).toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+function renderJira() {
+  const rows = filteredJira();
+  $("#count").textContent = rows.length + " / " + JIRA.length + " kart";
+  $("#rows").innerHTML = rows.slice(0, 400).map(c => `
+    <div class="row ${JSEL === c.key ? "sel" : ""}" data-j="${esc(c.key)}">
+      <div class="top">
+        <span class="jkey">${esc(c.key)}</span>
+        <span class="jstat ${statClass(c.status)}">${esc(c.status)}</span>
+        ${c.operationCount ? `<span class="jbadge" title="bağlı uç">${c.operationCount} uç</span>`
+          : c.endpointCount ? `<span class="jbadge test" title="endpoint geçiyor ama eşleşmedi">?</span>` : ""}
+      </div>
+      <div class="s">${esc(c.summary)}</div>
+    </div>`).join("")
+    + (rows.length > 400 ? `<div class="row s">… +${rows.length - 400} kart (aramayı daralt)</div>` : "");
+  document.querySelectorAll("[data-j]").forEach(el =>
+    el.onclick = () => openJira(el.dataset.j));
+}
+
+async function openJira(key) {
+  JSEL = key; renderJira();
+  const c = await api("/api/jira/" + encodeURIComponent(key));
+  if (c.error) { $("#detail").innerHTML = `<div class="empty">${esc(c.error)}</div>`; return; }
+
+  const eps = (c.endpoints || []).map(e => {
+    if (!e.operations.length) {
+      return `<div class="warnbox" style="margin-bottom:6px">
+        <code>${esc(e.method)} ${esc(e.shape)}</code> — sözleşmede karşılığı <b>yok</b>.
+        Uç koleksiyonda eksik olabilir ya da kart eski bir yolu referans veriyor olabilir.</div>`;
+    }
+    return e.operations.map(o => `
+      <div class="oplink" data-op="${esc(o.key)}">
+        <span class="m ${o.method}">${o.method}</span>
+        <span class="p" style="flex:1">${esc(o.path)}</span>
+        <span class="s">${esc(o.service)}</span>
+        <span class="meta">aç →</span>
+      </div>`).join("");
+  }).join("");
+
+  $("#detail").innerHTML = `
+    <h2>${esc(c.key)}</h2>
+    <div class="sub">
+      <span class="jstat ${statClass(c.status)}">${esc(c.status)}</span>
+      &nbsp;${esc(c.type)}${c.assignee ? " · " + esc(c.assignee) : ""}
+      ${c.parent ? ` · üst: <a href="${esc(META.jiraBase)}/browse/${esc(c.parent)}" target="_blank">${esc(c.parent)}</a>` : ""}
+      &nbsp;·&nbsp;<a href="${esc(META.jiraBase)}/browse/${esc(c.key)}" target="_blank">Jira'da aç</a>
+    </div>
+    <section><h3>Özet</h3><p style="margin:0">${esc(c.summary)}</p></section>
+    <section>
+      <h3>Kartın endpoint'leri (${(c.endpoints || []).length})</h3>
+      ${eps || '<p class="meta" style="margin:0">Kart metninde endpoint referansı yok.</p>'}
+    </section>`;
+
+  document.querySelectorAll("[data-op]").forEach(el =>
+    el.onclick = () => { setMode("ep"); openCard(el.dataset.op); });
 }
 
 function setAuth(on, src) {
@@ -173,6 +307,7 @@ function filtered() {
 }
 
 function render() {
+  if (MODE === "jira") return renderJira();
   const rows = filtered();
   $("#count").textContent = rows.length + " / " + CARDS.length + " operasyon";
   $("#rows").innerHTML = rows.map(c => `
@@ -328,7 +463,10 @@ $("#authBtn").onclick = async () => {
   else alert("Giriş başarısız: " + j(v.body || v.error));
 };
 
-["#q", "#svc", "#mth"].forEach(s => $(s).addEventListener("input", render));
+["#q", "#svc", "#mth", "#jstatus", "#jtype", "#jmatch"].forEach(s =>
+  $(s).addEventListener("input", render));
+document.querySelectorAll(".mode").forEach(b =>
+  b.onclick = () => setMode(b.dataset.mode));
 boot();
 </script>
 </body>
