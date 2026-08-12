@@ -11,6 +11,7 @@ Ikisi de yoksa auth gerektiren testler SKIP edilir — sessizce PASS gecmez.
 import json
 import os
 import pathlib
+import time
 
 import pytest
 import requests
@@ -113,7 +114,25 @@ def auth_token(api, config):
             "Auth yapilandirilmadi — ACCESS_TOKEN ya da TEST_EMAIL+OTP_CODE tanimla"
         )
 
-    req = api.post(OTP_REQUEST, json={"email": config["test_email"]})
+    # Sunucu OTP istekleri arasinda kisa bir bekleme penceresi uyguluyor
+    # (resendAvailableIn ~5sn) ve asilirsa 429 doner. Panel/paralel kosum ayni
+    # anda OTP isterse bu pencereye denk gelinir. Atlamak TEHLIKELI: skip build'i
+    # kirmaz, suite hicbir sey dogrulamadan yesil gorunur. Bu yuzden yeniden dener.
+    req = None
+    for attempt in range(3):
+        req = api.post(OTP_REQUEST, json={"email": config["test_email"]})
+        if req.status_code in (200, 201):
+            break
+        if req.status_code != 429 and attempt == 0:
+            break  # hiz siniri disi bir hata — tekrar denemenin anlami yok
+        wait = 6
+        try:
+            payload = req.json().get("data") or req.json().get("error", {}).get("meta", {})
+            wait = int(payload.get("resendAvailableIn") or payload.get("remainingSeconds") or 6)
+        except (ValueError, AttributeError, TypeError):
+            pass
+        time.sleep(min(wait + 1, 30))
+
     if req.status_code not in (200, 201):
         pytest.skip(f"otp/request basarisiz (HTTP {req.status_code}): {req.text[:200]}")
 

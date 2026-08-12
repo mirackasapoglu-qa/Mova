@@ -247,11 +247,36 @@ TP projesindeki 915 kartın 610'u endpoint referansı içeriyor; bunların 505'i
 sözleşmedeki bir operasyonla eşleşti. Eşleşmeyen 164 yol iki gruba ayrılıyor
 (tam liste: `reports/jira-unmatched.md`, üretici: `qa-dashboard/link_jira.py`):
 
-**Gerçek drift adayları:**
+**Canlıya sorularak doğrulananlar** (TP-134 üzerinden):
+
+| Endpoint | Canlı | Sonuç |
+|---|---|---|
+| `GET /v1/sidebar/menu` | **200** | Sözleşmede var, çalışıyor |
+| `GET /v1/sidebar/counts` | **404** `ERR_NOT_FOUND` | Uç **gerçekten yok** — 15 kart bunu referans veriyor |
+| `GET /v1/navigation/menu` | **404** | Uç **yok**; ayrıca envelope dışı yanıt (aşağıya bkz.) |
+
+TP-134 (*Web - App Shell, Sidebar, Rol Bazlı Menü ve Logout*, statü **Test**) var olmayan
+iki uca dayanıyor. Kartlar mı eski (uç `/sidebar/menu` olarak birleştirilmiş), yoksa
+uçlar hiç yazılmadı mı — netleştirilmeli.
+
+**Bonus bulgu — gateway 404'ü envelope uygulamıyor:**
+
+```
+GET /v1/navigation/menu  (gateway'de route yok)
+  {"message":"Cannot GET /v1/navigation/menu","error":"Not Found","statusCode":404}
+
+GET /v1/sidebar/counts   (servise ulasiyor, route yok)
+  {"success":false,"error":{"code":"ERR_NOT_FOUND","message":"Cannot GET /sidebar/counts"}}
+```
+
+Bilinmeyen bir yol gateway seviyesinde yakalanırsa NestJS varsayılan gövdesi dönüyor;
+servise ulaşırsa envelope uygulanıyor. C1'deki `projects/notes` 403 bulgusuyla aynı kök:
+global exception filter her katmanda devrede değil.
+
+**Diğer drift adayları:**
 
 | Kartlarda geçen | Sözleşmede olan | Kart |
 |---|---|---:|
-| `GET /v1/sidebar/counts` | `/v1/sidebar/menu` var, `counts` **yok** | 15 |
 | `GET/POST/PATCH /v1/cms/campuses` | yalnızca iç içe: `/v1/cms/schools/{id}/campuses` | 21 |
 | `GET /v1/projects/{id}/participants/template` | `/v1/projects/participants/template` (projectId **yok**) | 6 |
 | `PATCH /v1/tasks/{id}/status` | sözleşmede yok | 4 |

@@ -103,6 +103,11 @@
             border: 1px solid var(--line); border-radius: 6px; margin-bottom: 5px;
             cursor: pointer; background: var(--bg); }
   .oplink:hover { border-color: var(--accent); }
+  tr.jrow { cursor: pointer; }
+  tr.jrow:hover td { background: #1b202a; }
+  td.jk { color: var(--accent); font-weight: 600; }
+  td.ext a { color: var(--dim); text-decoration: none; font-size: 13px; }
+  td.ext a:hover { color: var(--accent); }
   .inline { display: flex; gap: 8px; align-items: center; }
 </style>
 </head>
@@ -345,11 +350,13 @@ async function openCard(key) {
     ${c.jira?.length ? `<section>
       <h3>Bağlı Jira kartları (${c.jira.length})</h3>
       <table class="jt">${c.jira.map(j => `
-        <tr>
-          <td><a href="${esc(META.jiraBase)}/browse/${esc(j.key)}" target="_blank">${esc(j.key)}</a></td>
+        <tr class="jrow" data-jk="${esc(j.key)}" title="panelde kartı aç">
+          <td class="jk">${esc(j.key)}</td>
           <td><span class="st ${["Test","Test Blocked"].includes(j.status) ? "hot" : ""}">${esc(j.status)}</span></td>
           <td class="ty">${esc(j.type)}</td>
           <td>${esc(j.summary)}</td>
+          <td class="ext"><a href="${esc(META.jiraBase)}/browse/${esc(j.key)}" target="_blank"
+             onclick="event.stopPropagation()" title="Jira'da aç">↗</a></td>
         </tr>`).join("")}</table>
     </section>` : ""}
 
@@ -387,6 +394,8 @@ async function openCard(key) {
 
   $("#run").onclick = () => runCard(c);
   if ($("#resolve")) $("#resolve").onclick = () => resolveIds(c);
+  document.querySelectorAll(".jrow").forEach(el =>
+    el.onclick = () => { setMode("jira"); openJira(el.dataset.jk); });
 }
 
 // Koleksiyonda gerçek ID yok ({{last_*_id}} koşum anında doluyordu) —
