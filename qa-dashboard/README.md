@@ -20,6 +20,11 @@ Ortam `.env`'den okunur: `BASE_URL`, `TENANT_ID`, `ACCESS_TOKEN` (opsiyonel).
   "sadece mutating" ve "sapma işaretli" görünümleri. ▲ = bilinen envelope sapması.
 - **Sağ:** seçili operasyon → sözleşme özeti (dokümante status, şema var mı, auth,
   mutating mi), path/query parametre alanları, dokümante örnek gövde, **Çalıştır**.
+- **Gerçek ID getir:** koleksiyonda gerçek ID yok (`{{last_customer_id}}` koşum anında
+  doluyordu). Bu buton path parametrelerini canlı koleksiyonlardan çeker — iç içe
+  yollarda kademeli çözer (`customerId` → `/v1/customers`, sonra `noteId` →
+  `/v1/customers/<id>/notes`). Yer tutucu ID ile uç 404 döndüğü için şema sapmaları
+  maskeleniyordu; bu buton o kör noktayı kapatır.
 - **Canlı test:** isteği atar, dönen status'ün dokümante olup olmadığını ve gövdenin
   spec şemasına uyup uymadığını değerlendirir; verdict + şema sapma listesi gösterir.
 

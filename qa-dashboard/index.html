@@ -196,9 +196,11 @@ async function openCard(key) {
         ${c.requestExample !== null && c.requestExample !== undefined
           ? `<div><label>Gövde (dokümante örnek)</label><textarea id="body">${esc(j(c.requestExample))}</textarea></div>` : ""}
         <div class="inline">
+          ${c.pathParams?.length ? `<button class="ghost" id="resolve">Gerçek ID getir</button>` : ""}
           ${c.mutating ? `<label class="inline" style="margin:0"><input type="checkbox" id="confirm" style="width:auto"> onaylıyorum</label>` : ""}
           <button id="run">Çalıştır</button>
         </div>
+        <div id="resolveInfo" class="meta"></div>
       </div>
       <div id="result" style="margin-top:12px"></div>
     </section>
@@ -208,6 +210,26 @@ async function openCard(key) {
   `;
 
   $("#run").onclick = () => runCard(c);
+  if ($("#resolve")) $("#resolve").onclick = () => resolveIds(c);
+}
+
+// Koleksiyonda gerçek ID yok ({{last_*_id}} koşum anında doluyordu) —
+// path parametrelerini canlı koleksiyonlardan çekip alanlara yazar.
+async function resolveIds(c) {
+  const btn = $("#resolve"), info = $("#resolveInfo");
+  btn.disabled = true; btn.textContent = "Aranıyor…";
+  const r = await api("/api/resolve/" + encodeURIComponent(c.key));
+  btn.disabled = false; btn.textContent = "Gerçek ID getir";
+
+  const values = r.values || {};
+  document.querySelectorAll(".pp").forEach(i => {
+    if (values[i.dataset.n]) i.value = values[i.dataset.n];
+  });
+
+  const found = Object.keys(values);
+  const lines = found.map(k => `${k} ← ${r.resolvedFrom?.[k] || "?"}`);
+  info.innerHTML = (r.error ? `<span style="color:var(--warn)">${esc(r.error)}</span><br>` : "")
+    + (lines.length ? esc(lines.join(" · ")) : "");
 }
 
 async function runCard(c) {

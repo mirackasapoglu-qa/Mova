@@ -155,6 +155,29 @@ FE entegrasyonu riskli.
 | `GET /v1/lookups/users` | `data[].departmentName` | `null` | `"Operasyon"` (string) |
 | `GET /v1/sidebar/menu` | `data.dashboard.count` | `null` | `$number` |
 | `GET /v1/auth/me` | `data.tenantId` | `null` | `uuid` |
+| `GET /v1/customers/{id}` | `data.taxNumber` | `null` | `"32266764006"` (string) |
+| `GET /v1/customers/{id}` | `data.taxOffice` | `null` | `"Küçükyalı"` (string) |
+
+Bireysel (`customerKind: individual`) müşteride vergi alanları doğal olarak boş;
+şema `string` diyor. Alanlar `nullable` işaretlenmeli.
+
+## C2b. Para alanı tip uyuşmazlığı — `totalRevenue`
+
+| Endpoint | Alan | Canlı | Doküman |
+|---|---|---|---|
+| `GET /v1/customers/{id}` | `data.totalRevenue` | `141591.45` (float) | tamsayı örnek → `integer` |
+
+Dokümante örnekte tam sayı verildiği için şema `integer` çıkarıldı; canlı ondalıklı
+dönüyor. `integer` olarak parse eden istemci ya kırılır ya kuruşu yuvarlar.
+
+Ayrıca: para alanının **float** dönmesi hassasiyet açısından riskli. Aynı yanıtta
+`quotes` tarafında `totalAmount` **string** (`"15000.00"`) olarak dönüyor — yani para
+temsili servisler arasında tutarsız. Tek bir konvansiyon (tercihen string/decimal)
+belirlenmeli.
+
+> Bu üç bulgu, path parametresi **gerçek bir ID ile** doldurulduğunda ortaya çıktı.
+> Yer tutucu ID kullanıldığında uç 404 döndüğü için sapmalar maskeleniyordu — panelin
+> "Gerçek ID getir" özelliği (`/api/resolve/<key>`) tam olarak bu kör noktayı kapatır.
 
 Departmanı olmayan kullanıcı `null` döndürüyor; şema `string` diyor. Tip olarak
 `string` bekleyen istemci kırılır — alanlar `nullable` işaretlenmeli.

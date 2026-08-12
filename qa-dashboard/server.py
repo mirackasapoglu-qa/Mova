@@ -190,6 +190,68 @@ def run_card(card, payload):
     return result
 
 
+def _list_items(body):
+    """Yanittan liste cikarir — OPRAS'ta iki kalip var: data[] ve data.data[]."""
+    if not isinstance(body, dict):
+        return []
+    data = body.get("data")
+    if isinstance(data, list):
+        return data
+    if isinstance(data, dict) and isinstance(data.get("data"), list):
+        return data["data"]
+    return []
+
+
+def resolve_path_params(card):
+    """Path parametrelerini canli koleksiyonlardan gercek ID'lerle doldurur.
+
+    Koleksiyonda gercek ID yok ({{last_customer_id}} kosum aninda doluyordu), bu
+    yuzden ID'yi canlidan cekeriz. Yontem: her path parametresi icin ondan ONCEKI
+    yol parcasi o kaynagin koleksiyonudur.
+
+        /v1/customers/{customerId}              -> GET /v1/customers        -> data[0].id
+        /v1/customers/{customerId}/notes/{noteId}
+            -> once customerId cozulur, sonra GET /v1/customers/<id>/notes -> data[0].id
+    """
+    if not BASE_URL:
+        return {"error": "BASE_URL tanimli degil"}
+
+    headers = {"User-Agent": UA, "Accept": "application/json", "x-tenant-id": TENANT_ID}
+    if TOKEN["value"]:
+        headers["Authorization"] = f"Bearer {TOKEN['value']}"
+
+    values, resolved_from, prefix = {}, {}, []
+    for segment in card["path"].strip("/").split("/"):
+        if segment.startswith("{") and segment.endswith("}"):
+            name = segment[1:-1]
+            collection = "/" + "/".join(prefix)
+            try:
+                resp = requests.get(f"{BASE_URL}{collection}", headers=headers,
+                                    params={"page": 1, "limit": 1}, timeout=TIMEOUT)
+                items = _list_items(resp.json()) if resp.ok else []
+            except (requests.RequestException, ValueError):
+                items = []
+
+            if not items:
+                return {"error": f"'{name}' icin canli kayit bulunamadi "
+                                 f"(kaynak: GET {collection})",
+                        "values": values, "resolvedFrom": resolved_from}
+
+            value = items[0].get("id")
+            if not value:
+                return {"error": f"'{name}' icin kayitta 'id' alani yok "
+                                 f"(kaynak: GET {collection})",
+                        "values": values, "resolvedFrom": resolved_from}
+
+            values[name] = value
+            resolved_from[name] = f"GET {collection}"
+            prefix.append(str(value))
+        else:
+            prefix.append(segment)
+
+    return {"values": values, "resolvedFrom": resolved_from}
+
+
 def otp_request(email):
     if not BASE_URL:
         return {"error": "BASE_URL tanimli degil"}
@@ -289,6 +351,13 @@ class Handler(BaseHTTPRequestHandler):
             TOKEN["value"] = payload.get("token", "")
             TOKEN["source"] = "manual" if TOKEN["value"] else ""
             return self._send({"authed": bool(TOKEN["value"])})
+
+        if self.path.startswith("/api/resolve/"):
+            key = urllib_unquote(self.path[len("/api/resolve/"):])
+            card = find_card(key)
+            if not card:
+                return self._send({"error": "kart bulunamadi"}, 404)
+            return self._send(resolve_path_params(card))
 
         if self.path.startswith("/api/run/"):
             key = urllib_unquote(self.path[len("/api/run/"):])
