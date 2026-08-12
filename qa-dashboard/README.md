@@ -7,6 +7,7 @@ envelope sapmaları ve **canlı test** butonu.
 
 ```bash
 .venv/bin/python qa-dashboard/build_registry.py   # spec -> registry (kartlar)
+.venv/bin/python qa-dashboard/link_jira.py        # TP kartlarini uclara bagla (opsiyonel)
 .venv/bin/python qa-dashboard/server.py           # http://127.0.0.1:8777
 ```
 
@@ -36,6 +37,11 @@ Ortam `.env`'den okunur: `BASE_URL`, `TENANT_ID`, `ACCESS_TOKEN` (opsiyonel).
   nullable eksiği, para alanı tip uyuşmazlığı, kayıp alan, bilinen sapma baseline'ı,
   yavaş yanıt, Cache-Control, PII.
 
+- **Bağlı Jira kartları:** her uç için o ucu kapsayan TP kartları listelenir (key,
+  statü, tip, özet — Jira'ya tıklanabilir link). Listede rozet olarak görünür;
+  `Jira: Test'te` filtresiyle QA'in iş kuyruğu (105 uç) süzülebilir,
+  `Jira kartı yok` ile kapsanmayan 79 uç görülür.
+
 ## Güvenlik duruşu
 
 - Token **yalnızca bellekte** tutulur, diske yazılmaz.
@@ -50,4 +56,9 @@ Ortam `.env`'den okunur: `BASE_URL`, `TENANT_ID`, `ACCESS_TOKEN` (opsiyonel).
   (`status`, `verdict`, `notes`, `owner`, `jira`, `checklist`) yeniden üretimde **korunur**.
 - `server.py` — stdlib HTTP sunucu (yalnız `requests` + `jsonschema` bağımlı).
 - `index.html` — tek dosya UI.
+- `link_jira.py` — TP kartlarını içeriğine göre endpoint'lere bağlar. Eşleştirme
+  **şekil** üzerinden: parametre adları önemsiz, yapı önemli
+  (`GET /api/projects/:id` ≡ `GET /v1/projects/{projectId}`). `/api` → `/v1` öneki
+  ve `:id`/somut UUID → `{}` normalize edilir. Eşleşmeyen yollar
+  `reports/jira-unmatched.md`'ye yazılır — sözleşme/kart drift sinyalidir.
 - `registry.json` — kart verisi (üretilmiş + elle zenginleştirilebilir).

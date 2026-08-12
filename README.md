@@ -136,6 +136,8 @@ tests/
 schemas/                         # success / error envelope şemaları
 qa-dashboard/
   build_registry.py              # openapi.json -> registry.json
+  link_jira.py                   # TP kartlarını içeriğine göre endpoint'lere bağlar
+  analyze.py                     # kural tabanlı otomatik yorum motoru
   server.py                      # yerel pano sunucusu (stdlib + requests)
   index.html                     # tek dosya UI
 rag/                             # QA bilgi tabanı (BM25, offline)

@@ -241,6 +241,44 @@ Davranış doğru (envelope'a uyan 404), eksik olan dokümantasyon.
 Tokensiz koşumda 102 GET ucunun **97'si** 401 döndü; koleksiyon bunu yalnızca ~5
 operasyonda dokümante etmiş. Davranış doğru, dokümantasyon eksik.
 
+## C5. Jira kartları ↔ sözleşme drift'i
+
+TP projesindeki 915 kartın 610'u endpoint referansı içeriyor; bunların 505'i (%83)
+sözleşmedeki bir operasyonla eşleşti. Eşleşmeyen 164 yol iki gruba ayrılıyor
+(tam liste: `reports/jira-unmatched.md`, üretici: `qa-dashboard/link_jira.py`):
+
+**Gerçek drift adayları:**
+
+| Kartlarda geçen | Sözleşmede olan | Kart |
+|---|---|---:|
+| `GET /v1/sidebar/counts` | `/v1/sidebar/menu` var, `counts` **yok** | 15 |
+| `GET/POST/PATCH /v1/cms/campuses` | yalnızca iç içe: `/v1/cms/schools/{id}/campuses` | 21 |
+| `GET /v1/projects/{id}/participants/template` | `/v1/projects/participants/template` (projectId **yok**) | 6 |
+| `PATCH /v1/tasks/{id}/status` | sözleşmede yok | 4 |
+
+**Kısaltma kaynaklı (muhtemelen kart metninde `cms` öneki atlanmış):**
+`/v1/events`, `/v1/banners`, `/v1/categories` → sözleşmede `/v1/cms/events`,
+`/v1/cms/banners`, `/v1/cms/categories`.
+
+Her iki grup da doğrulanmalı: uç gerçekten yok mu, koleksiyonda mı eksik, yoksa
+kart mı eski bir yolu referans veriyor?
+
+## C6. Sözleşmede sabit değer gömülü yollar
+
+Koleksiyondaki negatif test istekleri somut değerlerle yazıldığı için 9 yol ayrı
+operasyon olarak üretildi:
+
+```
+/v1/cms/schools/99999999-9999-4999-8999-999999999999
+/v1/cms/schools/not-a-uuid
+/v1/customers/00000000-0000-0000-0000-000000000000
+/v1/locations/provinces/34/districts
+```
+
+Bunlar parametrelenirse 161 path → 159'a iner ve negatif örnekler ilgili
+parametreli operasyonun dokümante 404/400 yanıtlarını zenginleştirir.
+`contract/postman_to_openapi.py` içinde normalize edilmeli.
+
 ## Açık sorular
 
 - **Canlı ortam adresi** — `BASE_URL` henüz tanımlı değil; canlı koşum yapılamadı.

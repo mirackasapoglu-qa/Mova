@@ -60,6 +60,7 @@ INDEX = HERE / "index.html"
 BASE_URL = (os.getenv("BASE_URL") or "").rstrip("/")
 TENANT_ID = os.getenv("TENANT_ID", "DEMO_TENANT")
 PORT = int(os.getenv("QA_PANEL_PORT", "8777"))
+JIRA_BASE = (os.getenv("JIRA_BASE") or "").rstrip("/")
 TIMEOUT = int(os.getenv("TIMEOUT", "15"))
 UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/124.0 Safari/537.36"
 
@@ -285,6 +286,8 @@ class Handler(BaseHTTPRequestHandler):
                 "authSource": TOKEN["source"],
                 "operations": registry["_meta"].get("operations"),
                 "paths": registry["_meta"].get("paths"),
+                "jiraBase": JIRA_BASE,
+                "jiraLinked": registry["_meta"].get("jiraLinkedOperations", 0),
             })
 
         if self.path == "/api/cards":
@@ -294,6 +297,10 @@ class Handler(BaseHTTPRequestHandler):
                 "service": c["service"], "summary": c["summary"],
                 "mutating": c["mutating"], "status": c.get("status", "untested"),
                 "flagged": bool(c.get("envelopeExceptions")),
+                "jiraCount": len(c.get("jira") or []),
+                # QA'in siradaki isi: "Test" statusundeki kartlari kapsayan uclar
+                "jiraInTest": sum(1 for j in (c.get("jira") or [])
+                                  if j.get("status") in ("Test", "Test Blocked")),
             } for c in cards])
 
         if self.path.startswith("/api/card/"):

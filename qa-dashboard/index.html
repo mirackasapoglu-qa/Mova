@@ -79,6 +79,17 @@
          padding: 1px 6px; border-radius: 8px; border: 1px solid currentColor; margin-right: 6px; }
   .sev.kritik { color: var(--err); } .sev.yuksek { color: #ff7b45; }
   .sev.orta { color: var(--warn); }  .sev.bilgi { color: var(--dim); }
+  .jbadge { font-size: 9px; padding: 1px 5px; border-radius: 8px; border: 1px solid var(--line);
+            color: var(--dim); font-family: var(--mono); }
+  .jbadge.test { color: var(--warn); border-color: var(--warn); }
+  table.jt { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table.jt td { padding: 4px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.jt td:first-child { font-family: var(--mono); white-space: nowrap; }
+  table.jt a { color: var(--accent); text-decoration: none; }
+  table.jt a:hover { text-decoration: underline; }
+  .st { font-size: 11px; color: var(--dim); white-space: nowrap; }
+  .st.hot { color: var(--warn); font-weight: 600; }
+  .ty { font-size: 11px; color: var(--dim); white-space: nowrap; }
   .inline { display: flex; gap: 8px; align-items: center; }
 </style>
 </head>
@@ -102,6 +113,8 @@
           <option value="GET">sadece GET</option>
           <option value="mut">sadece mutating</option>
           <option value="flag">sapma işaretli</option>
+          <option value="jiratest">Jira: Test'te</option>
+          <option value="nojira">Jira kartı yok</option>
         </select>
       </div>
       <div class="meta" id="count">—</div>
@@ -152,6 +165,8 @@ function filtered() {
     if (mth === "GET" && c.method !== "GET") return false;
     if (mth === "mut" && !c.mutating) return false;
     if (mth === "flag" && !c.flagged) return false;
+    if (mth === "jiratest" && !c.jiraInTest) return false;
+    if (mth === "nojira" && c.jiraCount) return false;
     if (q && !(c.path + " " + c.summary + " " + c.service).toLowerCase().includes(q)) return false;
     return true;
   });
@@ -166,6 +181,8 @@ function render() {
         <span class="m ${c.method}">${c.method}</span>
         <span class="p">${esc(c.path)}</span>
         ${c.flagged ? '<span class="flag" title="bilinen envelope sapması">▲</span>' : ""}
+        ${c.jiraInTest ? `<span class="jbadge test" title="Test statüsünde ${c.jiraInTest} kart">${c.jiraInTest} TEST</span>`
+          : c.jiraCount ? `<span class="jbadge" title="${c.jiraCount} bağlı kart">${c.jiraCount}</span>` : ""}
       </div>
       <div class="s">${esc(c.service)} · ${esc(c.summary)}</div>
     </div>`).join("");
@@ -189,6 +206,17 @@ async function openCard(key) {
     ${c.envelopeExceptions?.length ? `<div class="warnbox"><b>Bilinen sapma (${c.envelopeExceptions.length})</b><br>`
       + c.envelopeExceptions.map(e => `<code>${esc(e.anahtar)}</code> — <b>${esc(e.kategori)}</b>: ${esc(e.gerekce)}`).join("<br>")
       + `</div>` : ""}
+
+    ${c.jira?.length ? `<section>
+      <h3>Bağlı Jira kartları (${c.jira.length})</h3>
+      <table class="jt">${c.jira.map(j => `
+        <tr>
+          <td><a href="${esc(META.jiraBase)}/browse/${esc(j.key)}" target="_blank">${esc(j.key)}</a></td>
+          <td><span class="st ${["Test","Test Blocked"].includes(j.status) ? "hot" : ""}">${esc(j.status)}</span></td>
+          <td class="ty">${esc(j.type)}</td>
+          <td>${esc(j.summary)}</td>
+        </tr>`).join("")}</table>
+    </section>` : ""}
 
     <section>
       <h3>Sözleşme</h3>
