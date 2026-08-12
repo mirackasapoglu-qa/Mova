@@ -43,6 +43,9 @@ try:
 except ImportError:
     Draft7Validator = None
 
+# Otomatik yorum motoru (ayni dizin — server.py script olarak kosuyor)
+from analyze import analyze as analyze_result, summarize as summarize_findings
+
 HERE = pathlib.Path(__file__).parent
 ROOT = HERE.parent
 REGISTRY = HERE / "registry.json"
@@ -187,6 +190,14 @@ def run_card(card, payload):
         result["verdict"] = "SUNUCU HATASI"
     else:
         result["verdict"] = "UYUMLU — status ve sema sozlesmeye uygun"
+
+    # Otomatik yorum (kural tabanli, deterministik)
+    result["findings"] = analyze_result(
+        card, response.status_code, parsed, result["schemaErrors"],
+        elapsed_ms=elapsed, headers=dict(response.headers),
+        path_params=payload.get("pathParams") or {},
+    )
+    result["findingsSummary"] = summarize_findings(result["findings"])
     return result
 
 

@@ -28,6 +28,14 @@ Ortam `.env`'den okunur: `BASE_URL`, `TENANT_ID`, `ACCESS_TOKEN` (opsiyonel).
 - **Canlı test:** isteği atar, dönen status'ün dokümante olup olmadığını ve gövdenin
   spec şemasına uyup uymadığını değerlendirir; verdict + şema sapma listesi gösterir.
 
+- **Otomatik yorum:** her koşumdan sonra `analyze.py` sapmaları sınıflandırıp Türkçe
+  değerlendirme üretir — hangi alan, neden önemli, ne yapılmalı. Şiddet sırası
+  `kritik > yüksek > orta > bilgi`. LLM kullanmaz: deterministik, offline ve birim
+  testli (`tests/test_analyze.py`, 18 test). Kapsadığı kurallar: 5xx, dokümante
+  olmayan status, yer tutucu ID maskelemesi, boş liste, liste yapısı kayması,
+  nullable eksiği, para alanı tip uyuşmazlığı, kayıp alan, bilinen sapma baseline'ı,
+  yavaş yanıt, Cache-Control, PII.
+
 ## Güvenlik duruşu
 
 - Token **yalnızca bellekte** tutulur, diske yazılmaz.

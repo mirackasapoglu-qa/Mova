@@ -66,6 +66,19 @@
   .warnbox { background: #2a2110; border: 1px solid #4a3a1a; color: #e8d5a8;
              padding: 10px 12px; border-radius: 6px; font-size: 12px; margin-bottom: 10px; }
   label { font-size: 12px; color: var(--dim); display: block; margin-bottom: 4px; }
+  .finding { border-left: 3px solid var(--line); background: var(--bg); padding: 8px 12px;
+             border-radius: 0 6px 6px 0; margin-bottom: 6px; }
+  .finding.kritik { border-left-color: var(--err); }
+  .finding.yuksek { border-left-color: #ff7b45; }
+  .finding.orta   { border-left-color: var(--warn); }
+  .finding.bilgi  { border-left-color: var(--dim); }
+  .finding b { font-size: 13px; }
+  .finding p { margin: 3px 0 0; font-size: 12px; color: #c3cad6; }
+  .finding .oneri { color: var(--accent); font-size: 12px; margin-top: 3px; }
+  .sev { font-size: 10px; text-transform: uppercase; letter-spacing: .05em;
+         padding: 1px 6px; border-radius: 8px; border: 1px solid currentColor; margin-right: 6px; }
+  .sev.kritik { color: var(--err); } .sev.yuksek { color: #ff7b45; }
+  .sev.orta { color: var(--warn); }  .sev.bilgi { color: var(--dim); }
   .inline { display: flex; gap: 8px; align-items: center; }
 </style>
 </head>
@@ -259,7 +272,17 @@ async function runCard(c) {
       <dt>Süre</dt><dd>${r.elapsedMs} ms</dd>
       <dt>Content-Type</dt><dd>${esc(r.contentType)}</dd>
     </dl>
-    ${r.schemaErrors?.length ? `<div style="margin:8px 0"><b>Şema sapmaları</b><pre>`
+    ${r.findings?.length ? `<div style="margin:12px 0">
+      <b>Otomatik yorum</b> <span class="meta">${esc(r.findingsSummary || "")}</span>
+      <div style="margin-top:6px">` + r.findings.map(f => `
+        <div class="finding ${esc(f.severity)}">
+          <b><span class="sev ${esc(f.severity)}">${esc(f.severity)}</span>${esc(f.baslik)}</b>
+          <p>${esc(f.aciklama)}</p>
+          ${f.oneri ? `<div class="oneri">→ ${esc(f.oneri)}</div>` : ""}
+        </div>`).join("") + `</div></div>`
+      : `<div class="meta" style="margin:10px 0">${esc(r.findingsSummary || "")}</div>`}
+
+    ${r.schemaErrors?.length ? `<div style="margin:8px 0"><b>Ham şema sapmaları</b><pre>`
       + esc(r.schemaErrors.map(e => e.path + ": " + e.message).join("\n")) + `</pre></div>` : ""}
     <div style="margin-top:8px"><b>Yanıt</b> <span class="meta">(PII maskeli)</span>
       <pre>${esc(j(r.body))}</pre></div>`;
