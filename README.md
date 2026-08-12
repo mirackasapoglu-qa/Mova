@@ -141,9 +141,28 @@ qa-dashboard/
 rag/                             # QA bilgi tabanı (BM25, offline)
 ```
 
+## Canlı GET taraması
+
+`contract/sweep.py` her GET operasyonunu çağırıp tek satırlık sonuç üretir: alınan
+status, dokümante mi, envelope uyumu, şema sapması, süre, gövde önizlemesi (PII maskeli).
+
+```bash
+.venv/bin/python contract/sweep.py                     # tablo
+.venv/bin/python contract/sweep.py --md rapor.md       # markdown rapor
+.venv/bin/python contract/sweep.py --service Customers
+.venv/bin/python contract/sweep.py --no-resolve        # yer tutucu ID (eski davranış)
+```
+
+Path parametreleri **varsayılan olarak canlıdan çözümlenir** (`qa_core/resolver.py`):
+yer tutucu ID kullanıldığında uçlar 404 döner, 404 sözleşmeye uygun olduğu için sonuç
+"uyumlu" görünür ve yanıt gövdesi hiç doğrulanmaz. Çözümleme bu kör noktayı kapatır —
+ilk koşumda **19 gizli şema sapması** ortaya çıkardı.
+
 ## Bilinen kısıtlar
 
-- **Canlı ortam adresi henüz tanımlı değil** (`BASE_URL` boş) — canlı koşum yapılmadı.
 - `otp/request` hız sınırlı (`OTP_LOOKUP_RATE_LIMITED`); negatif testler test hesabını
   kilitlememek için bilinçli olarak lookup öncesi validation'a takılır.
 - 4 internal servis ucu (`{{project_url}}` / `{{file_url}}`) gateway sözleşmesi dışında.
+- Sweep'te 8 uçta path parametresi çözülemiyor (ilgili koleksiyonda kayıt yok) —
+  o uçlar 404 dönüyor ve gövdeleri doğrulanmıyor.
+- Jira hesabında `TRANSITION_ISSUES`/`EDIT_ISSUES` yetkisi yok; yalnızca yorum yazılabilir.
