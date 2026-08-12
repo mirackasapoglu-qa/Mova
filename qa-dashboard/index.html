@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QA Endpoint Panosu</title>
+<style>
+  :root {
+    --bg: #0f1115; --panel: #161a21; --line: #262c37; --fg: #e6e9ef;
+    --dim: #8b94a5; --accent: #5b9dff; --ok: #3fb950; --warn: #d29922; --err: #f85149;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  header { display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+           padding: 12px 18px; border-bottom: 1px solid var(--line); background: var(--panel); }
+  header h1 { font-size: 15px; margin: 0; font-weight: 600; }
+  .meta { color: var(--dim); font-size: 12px; font-family: var(--mono); }
+  .spacer { flex: 1; }
+  .pill { font-size: 11px; padding: 2px 8px; border-radius: 10px; border: 1px solid var(--line); }
+  .pill.on { color: var(--ok); border-color: var(--ok); }
+  .pill.off { color: var(--warn); border-color: var(--warn); }
+  button { font: inherit; background: var(--accent); color: #fff; border: 0;
+           padding: 7px 14px; border-radius: 6px; cursor: pointer; }
+  button.ghost { background: transparent; border: 1px solid var(--line); color: var(--fg); }
+  button:disabled { opacity: .5; cursor: not-allowed; }
+  input, textarea, select { font: inherit; background: var(--bg); color: var(--fg);
+           border: 1px solid var(--line); border-radius: 6px; padding: 7px 10px; width: 100%; }
+  textarea { font-family: var(--mono); font-size: 12px; min-height: 90px; resize: vertical; }
+  main { display: grid; grid-template-columns: 380px 1fr; height: calc(100vh - 53px); }
+  #list { border-right: 1px solid var(--line); overflow-y: auto; }
+  #filters { position: sticky; top: 0; background: var(--panel); padding: 10px;
+             border-bottom: 1px solid var(--line); display: grid; gap: 8px; }
+  .row { padding: 9px 12px; border-bottom: 1px solid var(--line); cursor: pointer; }
+  .row:hover { background: #1b202a; }
+  .row.sel { background: #1d2836; border-left: 2px solid var(--accent); }
+  .row .top { display: flex; align-items: center; gap: 8px; }
+  .m { font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 1px 5px;
+       border-radius: 3px; border: 1px solid currentColor; }
+  .m.GET { color: var(--ok); } .m.POST { color: var(--accent); }
+  .m.PATCH, .m.PUT { color: var(--warn); } .m.DELETE { color: var(--err); }
+  .row .p { font-family: var(--mono); font-size: 12px; overflow: hidden;
+            text-overflow: ellipsis; white-space: nowrap; }
+  .row .s { color: var(--dim); font-size: 11px; }
+  .flag { color: var(--warn); }
+  #detail { overflow-y: auto; padding: 18px 22px; }
+  .empty { color: var(--dim); padding: 40px; text-align: center; }
+  h2 { font-size: 16px; margin: 0 0 4px; font-family: var(--mono); }
+  .sub { color: var(--dim); font-size: 12px; margin-bottom: 16px; }
+  section { border: 1px solid var(--line); border-radius: 8px; padding: 14px;
+            margin-bottom: 14px; background: var(--panel); }
+  section h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .06em;
+               color: var(--dim); margin: 0 0 10px; font-weight: 600; }
+  pre { font-family: var(--mono); font-size: 12px; background: var(--bg); padding: 10px;
+        border-radius: 6px; border: 1px solid var(--line); overflow-x: auto; margin: 0;
+        max-height: 380px; overflow-y: auto; }
+  .grid { display: grid; gap: 8px; }
+  .kv { display: grid; grid-template-columns: 130px 1fr; gap: 6px; font-size: 13px; }
+  .kv dt { color: var(--dim); }
+  .kv dd { margin: 0; font-family: var(--mono); font-size: 12px; }
+  .verdict { padding: 9px 12px; border-radius: 6px; font-size: 13px; margin-bottom: 10px; }
+  .verdict.ok { background: #10251a; color: var(--ok); border: 1px solid #1d4429; }
+  .verdict.bad { background: #2a1416; color: var(--err); border: 1px solid #4a1f22; }
+  .verdict.warn { background: #2a2110; color: var(--warn); border: 1px solid #4a3a1a; }
+  .warnbox { background: #2a2110; border: 1px solid #4a3a1a; color: #e8d5a8;
+             padding: 10px 12px; border-radius: 6px; font-size: 12px; margin-bottom: 10px; }
+  label { font-size: 12px; color: var(--dim); display: block; margin-bottom: 4px; }
+  .inline { display: flex; gap: 8px; align-items: center; }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">QA Endpoint Panosu</h1>
+  <span class="meta" id="target">—</span>
+  <span class="pill" id="authPill">auth ?</span>
+  <span class="spacer"></span>
+  <button class="ghost" id="authBtn">Giriş</button>
+</header>
+
+<main>
+  <div id="list">
+    <div id="filters">
+      <input id="q" placeholder="ara: path, özet, servis…">
+      <div class="inline">
+        <select id="svc"><option value="">tüm servisler</option></select>
+        <select id="mth" style="width:130px">
+          <option value="">tüm metotlar</option>
+          <option value="GET">sadece GET</option>
+          <option value="mut">sadece mutating</option>
+          <option value="flag">sapma işaretli</option>
+        </select>
+      </div>
+      <div class="meta" id="count">—</div>
+    </div>
+    <div id="rows"></div>
+  </div>
+  <div id="detail"><div class="empty">Soldan bir endpoint seç.</div></div>
+</main>
+
+<script>
+let CARDS = [], SEL = null, META = {};
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+const j = o => JSON.stringify(o, null, 2);
+
+async function api(path, body) {
+  const opt = body ? {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)} : {};
+  const r = await fetch(path, opt);
+  return r.json();
+}
+
+async function boot() {
+  META = await api("/api/meta");
+  $("#title").textContent = META.title + " — QA Panosu";
+  $("#target").textContent = (META.baseUrl || "BASE_URL yok") + "  ·  tenant: " + META.tenantId
+    + "  ·  " + META.operations + " operasyon";
+  setAuth(META.authed, META.authSource);
+
+  CARDS = await api("/api/cards");
+  const svcs = [...new Set(CARDS.map(c => c.service))].sort();
+  $("#svc").innerHTML = '<option value="">tüm servisler</option>'
+    + svcs.map(s => `<option>${esc(s)}</option>`).join("");
+  render();
+}
+
+function setAuth(on, src) {
+  const p = $("#authPill");
+  p.className = "pill " + (on ? "on" : "off");
+  p.textContent = on ? "auth: token yüklü" + (src ? " (" + src + ")" : "") : "auth: yok";
+}
+
+function filtered() {
+  const q = $("#q").value.toLowerCase().trim();
+  const svc = $("#svc").value, mth = $("#mth").value;
+  return CARDS.filter(c => {
+    if (svc && c.service !== svc) return false;
+    if (mth === "GET" && c.method !== "GET") return false;
+    if (mth === "mut" && !c.mutating) return false;
+    if (mth === "flag" && !c.flagged) return false;
+    if (q && !(c.path + " " + c.summary + " " + c.service).toLowerCase().includes(q)) return false;
+    return true;
+  });
+}
+
+function render() {
+  const rows = filtered();
+  $("#count").textContent = rows.length + " / " + CARDS.length + " operasyon";
+  $("#rows").innerHTML = rows.map(c => `
+    <div class="row ${SEL === c.key ? "sel" : ""}" data-k="${esc(c.key)}">
+      <div class="top">
+        <span class="m ${c.method}">${c.method}</span>
+        <span class="p">${esc(c.path)}</span>
+        ${c.flagged ? '<span class="flag" title="bilinen envelope sapması">▲</span>' : ""}
+      </div>
+      <div class="s">${esc(c.service)} · ${esc(c.summary)}</div>
+    </div>`).join("");
+  document.querySelectorAll(".row").forEach(el =>
+    el.onclick = () => openCard(el.dataset.k));
+}
+
+async function openCard(key) {
+  SEL = key; render();
+  const c = await api("/api/card/" + encodeURIComponent(key));
+
+  const pathInputs = (c.pathParams || []).map(p =>
+    `<div><label>${esc(p)}</label><input class="pp" data-n="${esc(p)}" placeholder="${esc(p)} değeri"></div>`).join("");
+  const queryInputs = (c.queryParams || []).map(q =>
+    `<div><label>${esc(q.name)}</label><input class="qp" data-n="${esc(q.name)}" value="${esc(q.example ?? "")}"></div>`).join("");
+
+  $("#detail").innerHTML = `
+    <h2><span class="m ${c.method}">${c.method}</span> ${esc(c.path)}</h2>
+    <div class="sub">${esc(c.service)} · ${esc(c.summary)}</div>
+
+    ${c.envelopeExceptions?.length ? `<div class="warnbox"><b>Bilinen sapma (${c.envelopeExceptions.length})</b><br>`
+      + c.envelopeExceptions.map(e => `<code>${esc(e.anahtar)}</code> — <b>${esc(e.kategori)}</b>: ${esc(e.gerekce)}`).join("<br>")
+      + `</div>` : ""}
+
+    <section>
+      <h3>Sözleşme</h3>
+      <dl class="kv">
+        <dt>Dokümante status</dt><dd>${(c.documentedStatuses||[]).join(", ") || "—"}</dd>
+        <dt>Beklenen</dt><dd>${c.expectedStatus ?? "—"}</dd>
+        <dt>Yanıt şeması</dt><dd>${c.hasResponseSchema ? "var" : "YOK"}</dd>
+        <dt>Auth</dt><dd>${c.auth ? "gerekli" : "public"}</dd>
+        <dt>Tip</dt><dd>${c.mutating ? "MUTATING — veri değiştirir" : "salt-okunur"}</dd>
+      </dl>
+    </section>
+
+    <section>
+      <h3>Canlı test</h3>
+      ${c.mutating ? `<div class="warnbox">Bu operasyon canlı veri <b>yaratır/değiştirir</b>. Çalıştırmak için onay kutusunu işaretle.</div>` : ""}
+      <div class="grid">
+        ${pathInputs}${queryInputs}
+        ${c.requestExample !== null && c.requestExample !== undefined
+          ? `<div><label>Gövde (dokümante örnek)</label><textarea id="body">${esc(j(c.requestExample))}</textarea></div>` : ""}
+        <div class="inline">
+          ${c.mutating ? `<label class="inline" style="margin:0"><input type="checkbox" id="confirm" style="width:auto"> onaylıyorum</label>` : ""}
+          <button id="run">Çalıştır</button>
+        </div>
+      </div>
+      <div id="result" style="margin-top:12px"></div>
+    </section>
+
+    ${c.responseExample !== null && c.responseExample !== undefined ? `<section>
+      <h3>Dokümante örnek yanıt</h3><pre>${esc(j(c.responseExample))}</pre></section>` : ""}
+  `;
+
+  $("#run").onclick = () => runCard(c);
+}
+
+async function runCard(c) {
+  const btn = $("#run"); btn.disabled = true; btn.textContent = "Çalışıyor…";
+  const pathParams = {}, query = {};
+  document.querySelectorAll(".pp").forEach(i => { if (i.value) pathParams[i.dataset.n] = i.value; });
+  document.querySelectorAll(".qp").forEach(i => { if (i.value) query[i.dataset.n] = i.value; });
+
+  const r = await api("/api/run/" + encodeURIComponent(c.key), {
+    pathParams, query,
+    body: $("#body")?.value,
+    confirm: $("#confirm")?.checked || false,
+  });
+
+  btn.disabled = false; btn.textContent = "Çalıştır";
+
+  if (r.error) {
+    $("#result").innerHTML = `<div class="verdict bad">${esc(r.error)}</div>`;
+    return;
+  }
+  const cls = r.verdict.startsWith("UYUMLU") ? "ok"
+            : r.verdict.startsWith("SEMA") ? "warn" : "bad";
+  $("#result").innerHTML = `
+    <div class="verdict ${cls}">${esc(r.verdict)}</div>
+    <dl class="kv">
+      <dt>HTTP</dt><dd>${r.status} ${r.documented ? "(dokümante)" : "(DOKÜMANTE DEĞİL)"}</dd>
+      <dt>Süre</dt><dd>${r.elapsedMs} ms</dd>
+      <dt>Content-Type</dt><dd>${esc(r.contentType)}</dd>
+    </dl>
+    ${r.schemaErrors?.length ? `<div style="margin:8px 0"><b>Şema sapmaları</b><pre>`
+      + esc(r.schemaErrors.map(e => e.path + ": " + e.message).join("\n")) + `</pre></div>` : ""}
+    <div style="margin-top:8px"><b>Yanıt</b> <span class="meta">(PII maskeli)</span>
+      <pre>${esc(j(r.body))}</pre></div>`;
+}
+
+$("#authBtn").onclick = async () => {
+  const email = prompt("E-posta:");
+  if (!email) return;
+  const req = await api("/api/auth/otp/request", { email });
+  if (req.error) return alert("OTP isteği başarısız: " + req.error);
+  const otp = prompt("OTP kodu (HTTP " + req.status + "):");
+  if (!otp) return;
+  const v = await api("/api/auth/otp/verify", { email, otp });
+  if (v.authed) { setAuth(true, "otp"); alert("Giriş başarılı."); }
+  else alert("Giriş başarısız: " + j(v.body || v.error));
+};
+
+["#q", "#svc", "#mth"].forEach(s => $(s).addEventListener("input", render));
+boot();
+</script>
+</body>
+</html>

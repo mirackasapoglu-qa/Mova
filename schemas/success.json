@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SuccessResponse",
+  "description": "OPRAS basari envelope'i. 1041 ornek yanitin analizinden: {success, data} cekirdegi tum basarili yanitlarda ortak; correlationId/timestamp/meta/summary servise gore opsiyonel eklenir.",
+  "type": "object",
+  "required": ["success"],
+  "properties": {
+    "success": { "const": true },
+    "data": {},
+    "meta": {
+      "type": "object",
+      "description": "Sayfalama/liste metadatasi (liste uclarinda)",
+      "properties": {
+        "page": { "type": "integer" },
+        "limit": { "type": "integer" },
+        "total": { "type": "integer" },
+        "totalPages": { "type": "integer" }
+      }
+    },
+    "summary": { "type": "object" },
+    "correlationId": { "type": "string" },
+    "timestamp": { "type": "string" }
+  }
+}

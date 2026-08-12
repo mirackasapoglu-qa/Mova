@@ -1,0 +1,31 @@
+# Satir-sonu normalizasyonu — Windows/macOS/Linux arasinda tutarlilik.
+# Repo (index) icinde her metin dosyasi LF tutulur; checkout'ta asagidaki
+# kurallara gore ayarlanir. Boylece Windows'ta klonlayan biri de ayni dosyalari alir.
+* text=auto eol=lf
+
+# Kabuk betikleri DAIMA LF olmali — CRLF, bash shebang'ini (\r) kirar.
+*.sh      text eol=lf
+
+# PowerShell / Windows betikleri CRLF.
+*.ps1     text eol=crlf
+*.bat     text eol=crlf
+*.cmd     text eol=crlf
+
+# Kaynak / config / dokuman — LF.
+*.py      text eol=lf
+*.json    text eol=lf
+*.ini     text eol=lf
+*.yml     text eol=lf
+*.yaml    text eol=lf
+*.md      text eol=lf
+*.txt     text eol=lf
+*.example text eol=lf
+
+# Ikili dosyalar — eol donusumu YAPMA.
+*.pdf     binary
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.gif     binary
+*.ico     binary
+*.zip     binary

@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ErrorResponse",
+  "description": "OPRAS hata envelope'i. Ornek analizi: {success:false, error:{code,message}} cekirdek; validation hatalarinda error.errors[] alan bazli detay tasir; correlationId/path/timestamp opsiyonel.",
+  "type": "object",
+  "required": ["success", "error"],
+  "properties": {
+    "success": { "const": false },
+    "error": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "ERR_VALIDATION, NOT_FOUND, ERR_FORBIDDEN, ERR_RATE_LIMIT, CONFLICT vb."
+        },
+        "message": { "type": "string" },
+        "errors": {
+          "type": "array",
+          "description": "Alan bazli validation detayi (ERR_VALIDATION)",
+          "items": {
+            "type": "object",
+            "required": ["field", "message"],
+            "properties": {
+              "field": { "type": "string" },
+              "message": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "path": { "type": "string" },
+    "correlationId": { "type": "string" },
+    "timestamp": { "type": "string" }
+  }
+}

@@ -1,0 +1,132 @@
+name: API Tests
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "tests/**"
+      - "schemas/**"
+      - "contract/**"
+      - "requirements.txt"
+      - "pytest.ini"
+      - ".github/workflows/api-tests.yml"
+  pull_request:
+    paths:
+      - "tests/**"
+      - "schemas/**"
+      - "contract/**"
+      - "requirements.txt"
+      - "pytest.ini"
+  workflow_dispatch:
+    inputs:
+      markers:
+        description: "pytest -m ifadesi (bos = tumu)"
+        required: false
+        default: ""
+  schedule:
+    # Her gun 06:00 UTC (09:00 TR) — canli ortam regresyon kontrolu
+    - cron: "0 6 * * *"
+
+concurrency:
+  group: api-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Sozlesmenin kendi ic tutarliligi — canli ortam GEREKTIRMEZ, her zaman kosar.
+  # Postman koleksiyonu degistiginde bozulmayi aninda yakalar.
+  spec:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Spec guncel mi (koleksiyon -> openapi -> endpoints)
+        run: |
+          python contract/postman_to_openapi.py --base-url http://localhost:7000
+          python contract/gen_endpoints.py
+          if ! git diff --quiet contract/openapi.json tests/api/endpoints.py; then
+            echo "::error::Uretilen dosyalar guncel degil. Calistir:"
+            echo "  python contract/postman_to_openapi.py && python contract/gen_endpoints.py"
+            git diff --stat contract/openapi.json tests/api/endpoints.py
+            exit 1
+          fi
+
+      - name: Sozlesme ic tutarlilik testleri
+        run: |
+          mkdir -p reports
+          pytest -m schema --junitxml=reports/spec-junit.xml -rsxX
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: spec-reports
+          path: |
+            reports/report.html
+            reports/spec-junit.xml
+          if-no-files-found: warn
+          retention-days: 30
+
+  # Canli API testleri — BASE_URL tanimliysa kosar, degilse atlanir.
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: vars.BASE_URL != ''
+    env:
+      BASE_URL: ${{ vars.BASE_URL }}
+      TIMEOUT: "20"
+      TENANT_ID: ${{ vars.TENANT_ID || 'DEMO_TENANT' }}
+      TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+      OTP_CODE: ${{ secrets.OTP_CODE }}
+      ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Canli API testleri
+        run: |
+          mkdir -p reports
+          pytest \
+            ${{ github.event.inputs.markers && format('-m "{0}"', github.event.inputs.markers) || '-m "not mutating"' }} \
+            --junitxml=reports/junit.xml \
+            -rsxX
+
+      # Contract kosumu: yalnizca GET. Ornekler gercek govdeler oldugu icin
+      # mutating metotlar CI'da ASLA calistirilmaz.
+      - name: Contract (sadece GET)
+        continue-on-error: true   # INFORMATIONAL — koleksiyon<->canli kaymasi build'i kirmasin
+        run: ./contract/run.sh
+
+      - name: Test summary
+        if: always()
+        uses: test-summary/action@v2
+        with:
+          paths: "reports/junit.xml, reports/contract-junit.xml"
+        continue-on-error: true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-reports
+          path: |
+            reports/report.html
+            reports/junit.xml
+            reports/contract-junit.xml
+          if-no-files-found: warn
+          retention-days: 30

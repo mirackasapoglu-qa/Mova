@@ -1,0 +1,167 @@
+{
+  "_aciklama": "Envelope dogrulamasinin BILINEN sapma baseline'i. Bu dosyadaki girdiler testi kirmaz; listede OLMAYAN yeni bir sapma cikarsa test kirilir. Amac: mevcut borcu gorunur kilmak, yeni borç birikmesini engellemek. Bir sapma duzeltilince girdiyi buradan SIL.",
+  "_kategoriler": {
+    "envelope-disi": "GERCEK BULGU — global envelope uygulanmamis, API tarafinda duzeltilmeli",
+    "yanlis-status-eslemesi": "GERCEK BULGU — ornek/davranis uyusmazligi",
+    "placeholder-dsl": "Dokuman borcu — ornek govde assertion yer tutucusu iceriyor",
+    "eksik-ornek": "Dokuman borcu — ornek kisaltilmis, canliya karsi tamamlanmali",
+    "mesru-istisna": "Kural disi ama dogru — envelope beklenmiyor"
+  },
+  "istisnalar": {
+    "DELETE /v1/cms/events/{cmsEventId}/price-groups/{cmsPriceGroupBusId} [404]": {
+      "kategori": "placeholder-dsl",
+      "ihlal": "'code' is a required property",
+      "gerekce": "Ornek govde gercek veri degil, assertion yer tutucusu ($string/$gte:) iceriyor — sema dogrulamasi yapilamaz."
+    },
+    "DELETE /v1/customers/{customerId}/preferences/{prefId} [400]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'error' is a required property",
+      "gerekce": "Ornek kisaltilmis: error nesnesi yazilmamis. Canli yanit dogrulanip ornek tamamlanmali."
+    },
+    "DELETE /v1/projects/{projectId}/notes/{noteId} [403]": {
+      "kategori": "envelope-disi",
+      "ihlal": "'success' is a required property",
+      "gerekce": "NestJS varsayilan exception filter yaniti — global success/error envelope bu yolda uygulanmamis. GERCEK BULGU: dogrulanmali."
+    },
+    "GET /health [200]": {
+      "kategori": "mesru-istisna",
+      "ihlal": "'success' is a required property",
+      "gerekce": "Envelope disi ama dogru: standart disi govde bekleniyor (health-check / binary indirme)."
+    },
+    "GET /v1/files/{fileId}/download [200]": {
+      "kategori": "mesru-istisna",
+      "ihlal": "'success' is a required property",
+      "gerekce": "Envelope disi ama dogru: standart disi govde bekleniyor (health-check / binary indirme)."
+    },
+    "GET /v1/projects/drafts [200]": {
+      "kategori": "placeholder-dsl",
+      "ihlal": "'$gte:2' is not of type 'integer'",
+      "gerekce": "Ornek govde gercek veri degil, assertion yer tutucusu ($string/$gte:) iceriyor — sema dogrulamasi yapilamaz."
+    },
+    "GET /v1/projects/drafts/{tp379DraftId} [404]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'error' is a required property",
+      "gerekce": "Ornek kisaltilmis: error nesnesi yazilmamis. Canli yanit dogrulanip ornek tamamlanmali."
+    },
+    "GET /v1/projects/drafts/{tp379ReqDraftId} [404]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'error' is a required property",
+      "gerekce": "Ornek kisaltilmis: error nesnesi yazilmamis. Canli yanit dogrulanip ornek tamamlanmali."
+    },
+    "GET /v1/requests [400]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'error' is a required property",
+      "gerekce": "Ornek kisaltilmis: error nesnesi yazilmamis. Canli yanit dogrulanip ornek tamamlanmali."
+    },
+    "GET /v1/requests/{requestId}/activities [200]": {
+      "kategori": "placeholder-dsl",
+      "ihlal": "'$gte:1' is not of type 'integer'",
+      "gerekce": "Ornek govde gercek veri degil, assertion yer tutucusu ($string/$gte:) iceriyor — sema dogrulamasi yapilamaz."
+    },
+    "GET /v1/tasks [400]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'error' is a required property",
+      "gerekce": "Ornek kisaltilmis: error nesnesi yazilmamis. Canli yanit dogrulanip ornek tamamlanmali."
+    },
+    "GET /v1/tasks/{taskId}/activities [404]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'error' is a required property",
+      "gerekce": "Ornek kisaltilmis: error nesnesi yazilmamis. Canli yanit dogrulanip ornek tamamlanmali."
+    },
+    "PATCH /v1/customers/{customerId}/preferences/{prefId} [400]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'error' is a required property",
+      "gerekce": "Ornek kisaltilmis: error nesnesi yazilmamis. Canli yanit dogrulanip ornek tamamlanmali."
+    },
+    "PATCH /v1/expenses/{expenseId} [400]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'message' is a required property",
+      "gerekce": "error.message ornekte yok. Canlida donuyorsa ornek eksik, donmuyorsa API eksik."
+    },
+    "PATCH /v1/expenses/{expenseId}/approve [400]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'message' is a required property",
+      "gerekce": "error.message ornekte yok. Canlida donuyorsa ornek eksik, donmuyorsa API eksik."
+    },
+    "PATCH /v1/notifications/{notificationId}/read [400]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'error' is a required property",
+      "gerekce": "Ornek kisaltilmis: error nesnesi yazilmamis. Canli yanit dogrulanip ornek tamamlanmali."
+    },
+    "PATCH /v1/projects/{projectId} [400]": {
+      "kategori": "placeholder-dsl",
+      "ihlal": "'field' is a required property",
+      "gerekce": "Ornek govde gercek veri degil, assertion yer tutucusu ($string/$gte:) iceriyor — sema dogrulamasi yapilamaz."
+    },
+    "PATCH /v1/projects/{projectId}/notes/{noteId} [403]": {
+      "kategori": "envelope-disi",
+      "ihlal": "'success' is a required property",
+      "gerekce": "NestJS varsayilan exception filter yaniti — global success/error envelope bu yolda uygulanmamis. GERCEK BULGU: dogrulanmali."
+    },
+    "PATCH /v1/quotes/{quoteId} [400]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'message' is a required property",
+      "gerekce": "error.message ornekte yok. Canlida donuyorsa ornek eksik, donmuyorsa API eksik."
+    },
+    "PATCH /v1/requests/{requestId} [400]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'message' is a required property",
+      "gerekce": "error.message ornekte yok. Canlida donuyorsa ornek eksik, donmuyorsa API eksik."
+    },
+    "POST /v1/notifications/read-bulk [400]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'error' is a required property",
+      "gerekce": "Ornek kisaltilmis: error nesnesi yazilmamis. Canli yanit dogrulanip ornek tamamlanmali."
+    },
+    "POST /v1/projects [400]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'message' is a required property",
+      "gerekce": "error.message ornekte yok. Canlida donuyorsa ornek eksik, donmuyorsa API eksik."
+    },
+    "POST /v1/projects/drafts [400]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'error' is a required property",
+      "gerekce": "Ornek kisaltilmis: error nesnesi yazilmamis. Canli yanit dogrulanip ornek tamamlanmali."
+    },
+    "POST /v1/projects/{projectId}/notes [403]": {
+      "kategori": "envelope-disi",
+      "ihlal": "'success' is a required property",
+      "gerekce": "NestJS varsayilan exception filter yaniti — global success/error envelope bu yolda uygulanmamis. GERCEK BULGU: dogrulanmali."
+    },
+    "POST /v1/quotes [400]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'message' is a required property",
+      "gerekce": "error.message ornekte yok. Canlida donuyorsa ornek eksik, donmuyorsa API eksik."
+    },
+    "POST /v1/quotes/{quoteId}/approve [422]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'error' is a required property",
+      "gerekce": "Ornek kisaltilmis: error nesnesi yazilmamis. Canli yanit dogrulanip ornek tamamlanmali."
+    },
+    "POST /v1/quotes/{quoteId}/reject [400]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'error' is a required property",
+      "gerekce": "Ornek kisaltilmis: error nesnesi yazilmamis. Canli yanit dogrulanip ornek tamamlanmali."
+    },
+    "POST /v1/quotes/{quoteId}/send [422]": {
+      "kategori": "yanlis-status-eslemesi",
+      "ihlal": "'error' is a required property",
+      "gerekce": "Basari govdesi hata status'u altinda dokumante edilmis. GERCEK BULGU: ornek ya da davranis hatali."
+    },
+    "POST /v1/requests [422]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'message' is a required property",
+      "gerekce": "error.message ornekte yok. Canlida donuyorsa ornek eksik, donmuyorsa API eksik."
+    },
+    "POST /v1/requests/drafts [422]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'message' is a required property",
+      "gerekce": "error.message ornekte yok. Canlida donuyorsa ornek eksik, donmuyorsa API eksik."
+    },
+    "POST /v1/tasks [400]": {
+      "kategori": "eksik-ornek",
+      "ihlal": "'message' is a required property",
+      "gerekce": "error.message ornekte yok. Canlida donuyorsa ornek eksik, donmuyorsa API eksik."
+    }
+  }
+}

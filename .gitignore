@@ -1,0 +1,18 @@
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+venv/
+.venv/
+.hypothesis/
+schemathesis-report/
+captures/
+
+# Turetilmis ciktilar — dizin korunur, icerigi yok sayilir
+reports/*
+!reports/.gitkeep
+rag/sources/*
+!rag/sources/.gitkeep
+rag/corpus.jsonl
+qa-dashboard/runs/*
+!qa-dashboard/runs/.gitkeep

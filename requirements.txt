@@ -1,0 +1,6 @@
+pytest>=8.0
+requests>=2.31
+jsonschema>=4.21
+python-dotenv>=1.0
+pytest-html>=4.1
+schemathesis>=4,<5
