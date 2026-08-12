@@ -252,12 +252,22 @@ sözleşmedeki bir operasyonla eşleşti. Eşleşmeyen 164 yol iki gruba ayrıl�
 | Endpoint | Canlı | Sonuç |
 |---|---|---|
 | `GET /v1/sidebar/menu` | **200** | Sözleşmede var, çalışıyor |
-| `GET /v1/sidebar/counts` | **404** `ERR_NOT_FOUND` | Uç **gerçekten yok** — 15 kart bunu referans veriyor |
-| `GET /v1/navigation/menu` | **404** | Uç **yok**; ayrıca envelope dışı yanıt (aşağıya bkz.) |
+| `GET /v1/sidebar/counts` | **404** `ERR_NOT_FOUND` | **Kasıtlı olarak kaldırılmış** — bug değil |
+| `GET /v1/navigation/menu` | **404** | Hiç yazılmamış; işlevi `sidebar/menu`'ye taşınmış |
 
-TP-134 (*Web - App Shell, Sidebar, Rol Bazlı Menü ve Logout*, statü **Test**) var olmayan
-iki uca dayanıyor. Kartlar mı eski (uç `/sidebar/menu` olarak birleştirilmiş), yoksa
-uçlar hiç yazılmadı mı — netleştirilmeli.
+> **Bu bir kusur DEĞİL — kart hijyeni sorunu.** TP-367 (*BE - Sidebar Menü ve Sayı
+> API'sinin Yeniden Yapılandırılması*, 2026-07-17, Ready For Release) açıkça şöyle
+> diyor: *"Mevcut `GET /v1/sidebar/counts` endpoint'i kaldırılıp yerine her menü öğesi
+> için görünürlük ve sayı bilgisini birlikte dönen yeni yapı gelecek: `GET /v1/sidebar/menu`"*.
+>
+> Yani `visible` (rol bazlı menü, eski `navigation/menu`'nün işi) ve `count`
+> (eski `sidebar/counts`) tek uçta birleştirilmiş. 404'ler planlı.
+
+**Asıl risk:** TP-134 (FE, statü **Test**) ve TP-135 (BE, **Ready For Release**) hâlâ
+yeniden yapılandırma öncesi yolları kabul kriteri olarak taşıyor. Bu kartları test eden
+biri 404 görüp **yanlışlıkla bug açar**. Kartların kabul kriterleri güncellenmeli.
+Aynı durumdaki kartlar: `sidebar/counts` geçen 30 kart (TP-83, TP-85, TP-95, TP-107,
+TP-118, TP-130, TP-131, TP-240/241/242 …).
 
 **Bonus bulgu — gateway 404'ü envelope uygulamıyor:**
 
