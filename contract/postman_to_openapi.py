@@ -137,7 +137,9 @@ def merge(a, b):
 
     if ta == "object":
         props = {}
-        for key in set(a.get("properties", {})) | set(b.get("properties", {})):
+        # sorted(): set uzerinde dolasmak hash randomizasyonu yuzunden her kosumda
+        # farkli sira uretir -> uretilen spec deterministik olmaz, CI surekli kirilir
+        for key in sorted(set(a.get("properties", {})) | set(b.get("properties", {}))):
             pa = a.get("properties", {}).get(key)
             pb = b.get("properties", {}).get(key)
             props[key] = merge(pa, pb) if pa is not None and pb is not None else (pa or pb)
