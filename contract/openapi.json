@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:7000"
+      "url": "https://api.opras-test.site"
     }
   ],
   "tags": [
@@ -1562,7 +1562,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -1631,7 +1632,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -1731,7 +1733,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -1992,7 +1995,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -2052,7 +2056,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -2218,7 +2223,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -2372,7 +2378,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -2449,7 +2456,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -2559,7 +2567,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "noteId",
@@ -2567,7 +2576,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -2631,7 +2641,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "noteId",
@@ -2639,7 +2650,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -2714,7 +2726,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "noteId",
@@ -2722,7 +2735,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -2779,7 +2793,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -2853,7 +2868,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -2970,7 +2986,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "contactId",
@@ -2978,7 +2995,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -3069,7 +3087,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "contactId",
@@ -3077,7 +3096,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -3097,7 +3117,7 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "data": null,
+                    "data": {},
                     "success": {
                       "type": "boolean"
                     }
@@ -3782,7 +3802,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -3891,7 +3912,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -4066,7 +4088,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -4143,7 +4166,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -4202,7 +4226,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -4321,7 +4346,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -4440,7 +4466,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "prefId",
@@ -4448,7 +4475,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -4550,7 +4578,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "prefId",
@@ -4558,7 +4587,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -4721,7 +4751,7 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "availableTransitions": null,
+                        "availableTransitions": {},
                         "code": {
                           "type": "string"
                         },
@@ -5658,7 +5688,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -5679,7 +5710,7 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "availableTransitions": null,
+                        "availableTransitions": {},
                         "code": {
                           "type": "string"
                         },
@@ -5861,7 +5892,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -6053,7 +6085,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -6199,7 +6232,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -6306,7 +6340,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -6405,7 +6440,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "requestFileId",
@@ -6413,7 +6449,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "x-tenant-id",
@@ -6580,7 +6617,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "x-tenant-id",
@@ -6951,7 +6989,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -7011,7 +7050,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -7092,7 +7132,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -7158,7 +7199,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -7771,7 +7813,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -7872,7 +7915,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -7985,7 +8029,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -8079,7 +8124,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -8217,7 +8263,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -8299,7 +8346,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -8788,7 +8836,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -8831,7 +8880,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -8873,9 +8923,7 @@
                     "success": {
                       "type": "boolean"
                     },
-                    "summary": {
-                      "type": "string"
-                    }
+                    "summary": {}
                   },
                   "required": [
                     "success"
@@ -9389,7 +9437,7 @@
                         "code": {
                           "type": "string"
                         },
-                        "costBand": null,
+                        "costBand": {},
                         "createdAt": {
                           "type": "string"
                         },
@@ -9658,7 +9706,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -9864,7 +9913,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -10003,7 +10053,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -10127,7 +10178,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -10193,7 +10245,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -10277,7 +10330,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -10440,7 +10494,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -10555,7 +10610,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -10665,7 +10721,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -10754,7 +10811,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -10951,7 +11009,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -11096,7 +11155,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -11183,7 +11243,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -11287,7 +11348,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "participantId",
@@ -11295,7 +11357,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -11423,7 +11486,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "participantId",
@@ -11431,7 +11495,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -11555,7 +11620,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -12070,7 +12136,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -12266,7 +12333,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -12490,7 +12558,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "noteId",
@@ -12498,7 +12567,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -12604,7 +12674,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "noteId",
@@ -12612,7 +12683,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -14526,7 +14598,7 @@
                     "success": {
                       "type": "boolean"
                     },
-                    "summary": null
+                    "summary": {}
                   },
                   "required": [
                     "success"
@@ -14894,7 +14966,7 @@
                     "data": {
                       "type": "object",
                       "properties": {
-                        "alternatives": null,
+                        "alternatives": {},
                         "assignedTo": {
                           "type": "string"
                         },
@@ -14917,7 +14989,7 @@
                             "name"
                           ]
                         },
-                        "comments": null,
+                        "comments": {},
                         "createdAt": {
                           "type": "string"
                         },
@@ -14972,7 +15044,7 @@
                         "id": {
                           "type": "string"
                         },
-                        "prices": null,
+                        "prices": {},
                         "priority": {
                           "type": "string"
                         },
@@ -15232,7 +15304,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -15356,7 +15429,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -15488,7 +15562,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -15631,7 +15706,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "x-tenant-id",
@@ -15823,7 +15899,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "taskPriceId",
@@ -15831,7 +15908,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "x-tenant-id",
@@ -15969,7 +16047,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "taskPriceId",
@@ -15977,7 +16056,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "x-tenant-id",
@@ -16088,7 +16168,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "taskPriceId",
@@ -16096,7 +16177,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "x-tenant-id",
@@ -16223,7 +16305,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "x-tenant-id",
@@ -16332,7 +16415,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "x-tenant-id",
@@ -16405,7 +16489,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "taskAltId",
@@ -16413,7 +16498,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "x-tenant-id",
@@ -16469,7 +16555,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "taskAltId",
@@ -16477,7 +16564,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "x-tenant-id",
@@ -16547,7 +16635,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "taskAltId",
@@ -16555,7 +16644,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "x-tenant-id",
@@ -16611,7 +16701,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -16723,7 +16814,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -16791,7 +16883,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "taskFileId",
@@ -16799,7 +16892,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -16867,7 +16961,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "taskFileId",
@@ -16875,7 +16970,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -16918,7 +17014,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "taskFileId",
@@ -16926,7 +17023,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -17073,7 +17171,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "x-tenant-id",
@@ -17452,7 +17551,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "x-tenant-id",
@@ -17943,7 +18043,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -18076,7 +18177,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -18200,7 +18302,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -18614,7 +18717,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -18675,7 +18779,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -18880,7 +18985,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -19394,7 +19500,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -19448,7 +19555,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -19509,7 +19617,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -19577,7 +19686,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -19880,7 +19990,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -19949,7 +20060,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -20038,7 +20150,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -20401,7 +20514,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -20470,7 +20584,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -20555,7 +20670,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -20633,7 +20749,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -20715,7 +20832,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "permissionId",
@@ -20723,7 +20841,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -20817,7 +20936,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -20893,7 +21013,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -20980,7 +21101,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "permissionId",
@@ -20988,7 +21110,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -21641,7 +21764,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -21840,7 +21964,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -22176,7 +22301,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -22266,7 +22392,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -22351,7 +22478,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -22807,7 +22935,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -22917,7 +23046,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -23058,7 +23188,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -23118,7 +23249,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "isActive",
@@ -23193,7 +23325,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -23594,7 +23727,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -23704,7 +23838,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -23789,7 +23924,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -23849,7 +23985,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "isActive",
@@ -23924,7 +24061,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -24508,7 +24646,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -24674,7 +24813,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -24759,7 +24899,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -24825,7 +24966,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -24891,7 +25033,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -26301,7 +26444,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -26514,7 +26658,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -26638,7 +26783,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "cmsPriceGroupId",
@@ -26646,7 +26792,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -26761,7 +26908,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "cmsPriceGroupBusId",
@@ -26769,7 +26917,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -26827,7 +26976,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "priceGroupCampusId",
@@ -26835,7 +26985,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -27449,7 +27600,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -27787,7 +27939,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -27937,7 +28090,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -28003,7 +28157,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -28142,7 +28297,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -28363,7 +28519,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -28512,7 +28669,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -28904,7 +29062,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -28976,7 +29135,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -29202,7 +29362,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -29735,7 +29896,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "cmsCampusId",
@@ -29743,7 +29905,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -29878,7 +30041,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "cmsCampusId",
@@ -29886,7 +30050,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -29959,7 +30124,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "cmsCampusId",
@@ -29967,7 +30133,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -30042,7 +30209,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -30138,7 +30306,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "cmsCampusId",
@@ -30146,7 +30315,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ],
         "requestBody": {
@@ -30372,7 +30542,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "cmsCampusId",
@@ -30380,7 +30551,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -30497,7 +30669,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           },
           {
             "name": "cmsCampusId",
@@ -30505,7 +30678,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -30580,7 +30754,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -30653,7 +30828,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -30727,7 +30903,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       },
@@ -30799,7 +30976,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -30971,7 +31149,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }
@@ -31037,7 +31216,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "00000000-0000-0000-0000-000000000000"
           }
         ]
       }

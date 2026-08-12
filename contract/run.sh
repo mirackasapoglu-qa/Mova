@@ -33,10 +33,15 @@ fi
 UA="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 TENANT="${TENANT_ID:-DEMO_TENANT}"
 
+# examples: dokumante ornek istekler (koleksiyondan). Ornegi olmayan operasyonu atlar.
+# coverage : sema-tabanli deterministik uretim — parametresiz uclari da kosar, fuzzing degil.
+# PHASES=examples ile daraltilabilir.
+PHASES="${PHASES:-examples,coverage}"
+
 ARGS=(
   contract/openapi.json
   -u "$BASE_URL"
-  --phases examples
+  --phases "$PHASES"
   -c status_code_conformance,content_type_conformance,response_schema_conformance,not_a_server_error
   -H "User-Agent: $UA"
   -H "x-tenant-id: $TENANT"

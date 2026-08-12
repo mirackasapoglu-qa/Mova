@@ -108,6 +108,73 @@ gateway sözleşmesine dahil edilmedi — aksi halde her koşumda sahte hata ür
 
 Bu uçlar test edilecekse ayrı bir spec + ayrı `BASE_URL` ile ele alınmalı.
 
+---
+
+# Canlı Koşum Bulguları
+
+Ortam: `https://api.opras-test.site` · Tenant: `DEMO_TENANT` · Hesap: `admin@opras.dev` (rol Admin)
+Koşum: `contract/sweep.py` — 102 GET operasyonu, token'lı · 2026-08-12
+
+| Ölçüm | Sonuç |
+|---|---:|
+| Toplam GET operasyonu | 102 |
+| 2xx dönen | 49 |
+| Dokümante olmayan status | 33 |
+| Envelope sapması | 1 |
+| Şema sapması | 9 |
+
+## C1. Liste envelope'u dokümandan yapısal olarak farklı — YÜKSEK ÖNCELİK
+
+Koleksiyon çekirdek liste uçlarını **iç içe** (`data.data[]` + `data.meta`) gösteriyor;
+canlı **düz** (`data[]` + kök seviye `meta`) dönüyor.
+
+| Endpoint | Canlı | Doküman |
+|---|---|---|
+| `GET /v1/customers` | `data[] + meta` | `data.data[] + data.meta` |
+| `GET /v1/projects` | `data[] + meta` | `data.data[] + data.meta` |
+| `GET /v1/tasks` | `data[] + meta` | `data.data[] + data.meta` |
+| `GET /v1/requests` | `data[] + meta` | `data.data[] + data.meta` |
+| `GET /v1/quotes` | `data[] + meta` | `data.data[] + data.meta` |
+| `GET /v1/users` | `data[] + meta` | `data.data[] + data.meta` |
+| `GET /v1/approvals` | `data[] + meta` | `data.data[] + data.meta` |
+| `GET /v1/expenses` | `data[] + meta` | `data[]` (meta yok) |
+| `GET /v1/departments` | `data[] + meta` | `data[]` (meta yok) |
+
+Uyumlu olanlar: `/v1/roles`, `/v1/notifications`, `/v1/cms/schools`.
+
+**Neden önemli:** FE `response.data.data` okuyorsa 7 çekirdek ekranda liste boş gelir.
+Alan adları da kaymış — `/v1/quotes` canlıda `quoteCode`, dokümanda `code`.
+
+**Karar gerekli:** doküman mı eski, API mi değişti? Kaynak-of-truth netleşmeden
+FE entegrasyonu riskli.
+
+## C2. Dokümante edilmemiş `null` değerler
+
+| Endpoint | Alan | Canlı | Doküman |
+|---|---|---|---|
+| `GET /v1/lookups/users` | `data[].departmentName` | `null` | `"Operasyon"` (string) |
+| `GET /v1/sidebar/menu` | `data.dashboard.count` | `null` | `$number` |
+| `GET /v1/auth/me` | `data.tenantId` | `null` | `uuid` |
+
+Departmanı olmayan kullanıcı `null` döndürüyor; şema `string` diyor. Tip olarak
+`string` bekleyen istemci kırılır — alanlar `nullable` işaretlenmeli.
+
+`/v1/auth/me` → `tenantId: null` multi-tenant bir sistemde ayrıca teyit gerektirir
+(test: `test_me_carries_tenant_context`, xfail olarak izleniyor).
+
+## C3. Detay uçlarında 404 dokümante değil (32 operasyon)
+
+Var olmayan bir ID ile çağrıldığında 404 dönen ama bunu dokümante etmeyen uçlar:
+`/v1/projects/{projectId}`, `/v1/tasks/{taskId}`, `/v1/quotes/{quoteId}`,
+`/v1/requests/{requestId}`, `/v1/roles/{roleId}`, `/v1/cms/*/{id}` ailesi …
+
+Davranış doğru (envelope'a uyan 404), eksik olan dokümantasyon.
+
+## C4. 401 neredeyse hiç dokümante değilmiş
+
+Tokensiz koşumda 102 GET ucunun **97'si** 401 döndü; koleksiyon bunu yalnızca ~5
+operasyonda dokümante etmiş. Davranış doğru, dokümantasyon eksik.
+
 ## Açık sorular
 
 - **Canlı ortam adresi** — `BASE_URL` henüz tanımlı değil; canlı koşum yapılamadı.

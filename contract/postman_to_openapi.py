@@ -42,6 +42,12 @@ VAR_RE = re.compile(r"\{\{(\w+)\}\}")
 HOST_VAR_RE = re.compile(r"^\{\{(\w+)\}\}")
 GATEWAY_HOST_VARS = {"base_url", "baseUrl", "gatewayUrl"}
 
+# Path parametreleri icin yer tutucu. Koleksiyondaki {{last_*_id}} degiskenleri
+# kosum aninda dolduruluyordu; statik sozlesmede gercek ID yok. Var olmayan bir
+# UUID kullanmak bilinclidir: uretilen istek 404 dondurur ve "404 dokumante mi,
+# envelope'a uyuyor mu" sorusunu test eder.
+PLACEHOLDER_ID = "00000000-0000-0000-0000-000000000000"
+
 
 def to_param_name(name):
     """Postman degisken adini OpenAPI parametre adina cevirir."""
@@ -142,7 +148,12 @@ def merge(a, b):
         for key in sorted(set(a.get("properties", {})) | set(b.get("properties", {}))):
             pa = a.get("properties", {}).get(key)
             pb = b.get("properties", {}).get(key)
-            props[key] = merge(pa, pb) if pa is not None and pb is not None else (pa or pb)
+            if pa is not None and pb is not None:
+                props[key] = merge(pa, pb)
+            else:
+                # DIKKAT: `pa or pb` YANLIS — ANY semasi ({}) falsy oldugu icin
+                # None'a duser ve gecersiz sema uretir.
+                props[key] = pa if pa is not None else pb
         out["properties"] = props
         # KESISIM: sadece her iki ornekte de bulunan alanlar zorunlu
         req = sorted(set(a.get("required", [])) & set(b.get("required", [])))
@@ -203,6 +214,12 @@ def build_operation(item, trail, path):
         params.append({
             "name": name, "in": "path", "required": True,
             "schema": {"type": "string"},
+            # Ornek ZORUNLU: Schemathesis'in "examples" fazi ornegi olmayan
+            # operasyonu hic kosmadan atlar. Koleksiyonda gercek ID yok
+            # ({{last_user_id}} kosum aninda doluyordu), bu yuzden var olmayan
+            # bir ID kullaniriz. Beklenen yanit 404'tur ve bu da gecerli bir
+            # sozlesme kontrolu: 404 dokumante mi, envelope'a uyuyor mu.
+            "example": PLACEHOLDER_ID,
         })
 
     if isinstance(url, dict):

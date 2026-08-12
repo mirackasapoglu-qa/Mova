@@ -2,7 +2,7 @@
   "_meta": {
     "title": "OPRAS API",
     "generatedFrom": "contract/openapi.json",
-    "baseUrl": "http://localhost:7000",
+    "baseUrl": "https://api.opras-test.site",
     "operations": 237,
     "paths": 161,
     "preservedManualFields": [
