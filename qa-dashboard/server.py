@@ -305,9 +305,27 @@ def urllib_unquote(text):
     return urllib.parse.unquote(text.split("?")[0])
 
 
+def auto_login():
+    """.env'de TEST_EMAIL + OTP_CODE varsa acilista token al.
+
+    Dev ortaminda OTP sabit oldugu icin panel elle giris beklemeden kullanilabilir.
+    Token yine yalnizca bellekte tutulur.
+    """
+    if TOKEN["value"] or not BASE_URL:
+        return
+    email, otp = os.getenv("TEST_EMAIL"), os.getenv("OTP_CODE")
+    if not (email and otp):
+        return
+    otp_request(email)
+    result = otp_verify(email, otp)
+    if not result.get("authed"):
+        print(f"  ! otomatik giris basarisiz: {result.get('error') or result.get('body')}")
+
+
 def main():
     if not REGISTRY.exists():
         raise SystemExit("HATA: registry.json yok — once: python qa-dashboard/build_registry.py")
+    auto_login()
     meta = load_registry()["_meta"]
     print(f"QA Panosu — {meta.get('title')}")
     print(f"  operasyon : {meta.get('operations')} ({meta.get('paths')} path)")
