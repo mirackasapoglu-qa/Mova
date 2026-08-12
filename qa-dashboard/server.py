@@ -46,6 +46,11 @@ except ImportError:
 # Otomatik yorum motoru (ayni dizin — server.py script olarak kosuyor)
 from analyze import analyze as analyze_result, summarize as summarize_findings
 
+# Paylasilan cozumleyici (contract/sweep.py ile ayni kod)
+import sys as _sys
+_sys.path.insert(0, str(pathlib.Path(__file__).parent.parent))
+from qa_core.resolver import PathParamResolver, PLACEHOLDER_ID  # noqa: E402
+
 HERE = pathlib.Path(__file__).parent
 ROOT = HERE.parent
 REGISTRY = HERE / "registry.json"
@@ -201,29 +206,8 @@ def run_card(card, payload):
     return result
 
 
-def _list_items(body):
-    """Yanittan liste cikarir — OPRAS'ta iki kalip var: data[] ve data.data[]."""
-    if not isinstance(body, dict):
-        return []
-    data = body.get("data")
-    if isinstance(data, list):
-        return data
-    if isinstance(data, dict) and isinstance(data.get("data"), list):
-        return data["data"]
-    return []
-
-
 def resolve_path_params(card):
-    """Path parametrelerini canli koleksiyonlardan gercek ID'lerle doldurur.
-
-    Koleksiyonda gercek ID yok ({{last_customer_id}} kosum aninda doluyordu), bu
-    yuzden ID'yi canlidan cekeriz. Yontem: her path parametresi icin ondan ONCEKI
-    yol parcasi o kaynagin koleksiyonudur.
-
-        /v1/customers/{customerId}              -> GET /v1/customers        -> data[0].id
-        /v1/customers/{customerId}/notes/{noteId}
-            -> once customerId cozulur, sonra GET /v1/customers/<id>/notes -> data[0].id
-    """
+    """Path parametrelerini canlidan cozumler (paylasilan qa_core.resolver)."""
     if not BASE_URL:
         return {"error": "BASE_URL tanimli degil"}
 
@@ -231,36 +215,11 @@ def resolve_path_params(card):
     if TOKEN["value"]:
         headers["Authorization"] = f"Bearer {TOKEN['value']}"
 
-    values, resolved_from, prefix = {}, {}, []
-    for segment in card["path"].strip("/").split("/"):
-        if segment.startswith("{") and segment.endswith("}"):
-            name = segment[1:-1]
-            collection = "/" + "/".join(prefix)
-            try:
-                resp = requests.get(f"{BASE_URL}{collection}", headers=headers,
-                                    params={"page": 1, "limit": 1}, timeout=TIMEOUT)
-                items = _list_items(resp.json()) if resp.ok else []
-            except (requests.RequestException, ValueError):
-                items = []
-
-            if not items:
-                return {"error": f"'{name}' icin canli kayit bulunamadi "
-                                 f"(kaynak: GET {collection})",
-                        "values": values, "resolvedFrom": resolved_from}
-
-            value = items[0].get("id")
-            if not value:
-                return {"error": f"'{name}' icin kayitta 'id' alani yok "
-                                 f"(kaynak: GET {collection})",
-                        "values": values, "resolvedFrom": resolved_from}
-
-            values[name] = value
-            resolved_from[name] = f"GET {collection}"
-            prefix.append(str(value))
-        else:
-            prefix.append(segment)
-
-    return {"values": values, "resolvedFrom": resolved_from}
+    resolver = PathParamResolver(BASE_URL, headers=headers, timeout=TIMEOUT)
+    result = resolver.resolve(card["path"])
+    if not result.get("error"):
+        result.pop("error", None)
+    return result
 
 
 def otp_request(email):

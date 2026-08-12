@@ -115,8 +115,11 @@ QA_PANEL_PORT=8778 .venv/bin/python qa-dashboard/server.py
 ## Yapı
 
 ```
+qa_core/
+  resolver.py                    # path parametrelerini canlıdan çözümler (sweep + panel paylaşır)
 contract/
   opras.postman_collection.json  # kaynak koleksiyon (sözleşmenin kökü)
+  sweep.py                       # canlı GET taraması -> tablo/markdown rapor
   postman_to_openapi.py          # koleksiyon -> OpenAPI 3.0 bundle
   gen_endpoints.py               # openapi.json -> tests/api/endpoints.py
   openapi.json                   # üretilmiş sözleşme

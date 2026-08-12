@@ -6,6 +6,12 @@ alinan status, dokumante mi, envelope uyumu, sema sapmasi, sure ve govde onizlem
     .venv/bin/python contract/sweep.py                    # tablo (stdout)
     .venv/bin/python contract/sweep.py --md rapor.md      # markdown rapor
     .venv/bin/python contract/sweep.py --service Customers
+    .venv/bin/python contract/sweep.py --no-resolve        # yer tutucu ID (eski davranis)
+
+Path parametreleri VARSAYILAN OLARAK canlidan cozumlenir (qa_core.resolver): yer
+tutucu ID kullanildiginda uclar 404 doner, 404 sozlesmeye uygun oldugu icin sonuc
+"uyumlu" gorunur ve yanit govdesi hic dogrulanmaz. Cozumleme bu kor noktayi kapatir
+— ilk kullanimda 19 gizli sema sapmasi ortaya cikardi.
 
 GUVENLIK: yalnizca GET. Mutating metotlar bilincli olarak hic denenmez.
 Token: .env'deki ACCESS_TOKEN, yoksa TEST_EMAIL+OTP_CODE ile OTP akisi.
@@ -34,10 +40,12 @@ ROOT = HERE.parent
 SPEC = HERE / "openapi.json"
 SCHEMAS = ROOT / "schemas"
 
+sys.path.insert(0, str(ROOT))
+from qa_core.resolver import PathParamResolver, PLACEHOLDER_ID  # noqa: E402
+
 BASE_URL = (os.getenv("BASE_URL") or "").rstrip("/")
 TENANT_ID = os.getenv("TENANT_ID", "DEMO_TENANT")
 TIMEOUT = int(os.getenv("TIMEOUT", "15"))
-PLACEHOLDER_ID = "00000000-0000-0000-0000-000000000000"
 UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Chrome/124.0 Safari/537.36"
 
 MASK_KEYS = {"email", "phone", "iban", "taxnumber", "identitynumber",
@@ -72,14 +80,27 @@ def get_token():
     return token, ("otp" if token else "basarisiz")
 
 
-def build_url(path, op):
-    """Path parametrelerini yer tutucuyla, query'leri dokumante ornekle doldurur."""
-    url = re.sub(r"\{(\w+)\}", PLACEHOLDER_ID, path)
-    params = {}
-    for p in op.get("parameters", []) or []:
-        if p.get("in") == "query" and "example" in p:
-            params[p["name"]] = p["example"]
-    return url, params
+def query_params(op):
+    """Dokumante ornekli query parametreleri."""
+    return {p["name"]: p["example"] for p in (op.get("parameters") or [])
+            if p.get("in") == "query" and "example" in p}
+
+
+def build_url(path, resolver=None):
+    """Path parametrelerini cozumler; cozulemezse yer tutucuya duser.
+
+    Doner: (url, id_durumu) — id_durumu: 'gercek' | 'yer tutucu' | '-'
+    """
+    if "{" not in path:
+        return path, "-"
+    if resolver is None:
+        return re.sub(r"\{(\w+)\}", PLACEHOLDER_ID, path), "yer tutucu"
+
+    result = resolver.resolve(path)
+    url = resolver.fill(path, result["values"])
+    status = "gercek" if not result["error"] else (
+        "kismi" if result["values"] else "yer tutucu")
+    return url, status
 
 
 def preview(body, limit=90):
@@ -93,6 +114,8 @@ def main():
     ap.add_argument("--service", help="yalnizca bu tag/servis")
     ap.add_argument("--md", help="markdown raporu bu dosyaya yaz")
     ap.add_argument("--limit", type=int, help="ilk N operasyon")
+    ap.add_argument("--no-resolve", action="store_true",
+                    help="path parametrelerini canlidan cozumleme (yer tutucu ID kullan)")
     args = ap.parse_args()
 
     if not BASE_URL:
@@ -113,6 +136,9 @@ def main():
     if token:
         session.headers.update({"Authorization": f"Bearer {token}"})
 
+    resolver = None if args.no_resolve else PathParamResolver(
+        BASE_URL, headers=dict(session.headers), timeout=TIMEOUT)
+
     rows = []
     ops = [(p, o) for p in sorted(spec["paths"]) for m, o in spec["paths"][p].items()
            if m == "get"]
@@ -122,14 +148,16 @@ def main():
         ops = ops[:args.limit]
 
     for path, op in ops:
-        url, params = build_url(path, op)
+        url, id_state = build_url(path, resolver)
+        params = query_params(op)
         started = time.time()
         try:
             resp = session.get(f"{BASE_URL}{url}", params=params, timeout=TIMEOUT)
         except requests.RequestException as exc:
             rows.append({"path": path, "service": (op.get("tags") or ["-"])[0],
-                         "status": "ERR", "documented": "-", "envelope": "-",
-                         "schema": "-", "ms": "-", "preview": str(exc)[:80]})
+                         "id": id_state, "status": "ERR", "documented": "-",
+                         "envelope": "-", "schema": "-", "ms": "-",
+                         "preview": str(exc)[:80]})
             continue
         ms = round((time.time() - started) * 1000)
 
@@ -160,27 +188,37 @@ def main():
             sch = "OK" if not errs else f"{len(errs)} sapma"
 
         rows.append({
-            "path": path, "service": (op.get("tags") or ["-"])[0],
+            "path": path, "service": (op.get("tags") or ["-"])[0], "id": id_state,
             "status": resp.status_code, "documented": "evet" if is_doc else "HAYIR",
             "envelope": env, "schema": sch, "ms": ms, "preview": preview(body),
         })
 
     # ---- tablo ----
     width = max(len(r["path"]) for r in rows) if rows else 20
-    header = f"{'ENDPOINT':<{width}}  {'HTTP':>4}  {'DOK':<5}  {'ENVELOPE':<8}  {'SEMA':<9}  {'MS':>5}"
+    header = (f"{'ENDPOINT':<{width}}  {'ID':<11}  {'HTTP':>4}  {'DOK':<5}  "
+              f"{'ENVELOPE':<8}  {'SEMA':<9}  {'MS':>5}")
     print(header)
     print("-" * len(header))
     for r in rows:
-        print(f"{r['path']:<{width}}  {str(r['status']):>4}  {r['documented']:<5}  "
-              f"{r['envelope']:<8}  {str(r['schema']):<9}  {str(r['ms']):>5}")
+        print(f"{r['path']:<{width}}  {r['id']:<11}  {str(r['status']):>4}  "
+              f"{r['documented']:<5}  {r['envelope']:<8}  {str(r['schema']):<9}  "
+              f"{str(r['ms']):>5}")
 
     total = len(rows)
     undoc = sum(1 for r in rows if r["documented"] == "HAYIR")
     envbad = sum(1 for r in rows if r["envelope"] == "SAPMA")
     schbad = sum(1 for r in rows if isinstance(r["schema"], str) and "sapma" in r["schema"])
     ok2xx = sum(1 for r in rows if isinstance(r["status"], int) and r["status"] < 300)
+    real = sum(1 for r in rows if r["id"] == "gercek")
+    ph = sum(1 for r in rows if r["id"] in ("yer tutucu", "kismi"))
     print(f"\nTOPLAM {total} | 2xx {ok2xx} | dokumante degil {undoc} | "
           f"envelope sapmasi {envbad} | sema sapmasi {schbad}")
+    if resolver is not None:
+        print(f"ID cozumleme: {real} gercek, {ph} cozulemedi "
+              f"({resolver.requests_made} ek istek, {len(resolver._cache)} koleksiyon)")
+        if ph:
+            print("  ! cozulemeyen uclar 404 doner ve sapmalari MASKELER — "
+                  "ilgili koleksiyonda kayit yok demektir")
 
     if args.md:
         lines = [
@@ -188,12 +226,12 @@ def main():
             f"Tarih: {time.strftime('%Y-%m-%d %H:%M')} · Tenant: `{TENANT_ID}` · Token: {source}", "",
             f"**{total}** operasyon · 2xx **{ok2xx}** · dokümante değil **{undoc}** · "
             f"envelope sapması **{envbad}** · şema sapması **{schbad}**", "",
-            "| Endpoint | Servis | HTTP | Dokümante | Envelope | Şema | ms | Yanıt |",
-            "|---|---|---:|---|---|---|---:|---|",
+            "| Endpoint | Servis | ID | HTTP | Dokümante | Envelope | Şema | ms | Yanıt |",
+            "|---|---|---|---:|---|---|---|---:|---|",
         ]
         for r in rows:
             prev = r["preview"].replace("|", "\\|")
-            lines.append(f"| `{r['path']}` | {r['service']} | {r['status']} | "
+            lines.append(f"| `{r['path']}` | {r['service']} | {r['id']} | {r['status']} | "
                          f"{r['documented']} | {r['envelope']} | {r['schema']} | {r['ms']} | `{prev}` |")
         pathlib.Path(args.md).write_text("\n".join(lines) + "\n", encoding="utf-8")
         print(f"\nMarkdown -> {args.md}", file=sys.stderr)

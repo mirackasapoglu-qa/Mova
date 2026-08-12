@@ -115,13 +115,19 @@ Bu uçlar test edilecekse ayrı bir spec + ayrı `BASE_URL` ile ele alınmalı.
 Ortam: `https://api.opras-test.site` · Tenant: `DEMO_TENANT` · Hesap: `admin@opras.dev` (rol Admin)
 Koşum: `contract/sweep.py` — 102 GET operasyonu, token'lı · 2026-08-12
 
-| Ölçüm | Sonuç |
-|---|---:|
-| Toplam GET operasyonu | 102 |
-| 2xx dönen | 49 |
-| Dokümante olmayan status | 33 |
-| Envelope sapması | 1 |
-| Şema sapması | 9 |
+| Ölçüm | Yer tutucu ID | **Gerçek ID (çözümlemeli)** |
+|---|---:|---:|
+| Toplam GET operasyonu | 102 | 102 |
+| 2xx dönen | 49 | **86** |
+| Dokümante olmayan status | 33 | **9** |
+| Envelope sapması | 1 | **1** |
+| **Şema sapması** | 9 | **28** |
+
+Sağdaki kolon `contract/sweep.py`'nin path parametrelerini canlı koleksiyonlardan
+çözümlemesiyle alındı (42 uçta gerçek ID bulundu, 8'inde ilgili koleksiyon boş
+olduğu için çözülemedi). Yer tutucu ID kullanıldığında uçlar 404 dönüyor ve 404
+sözleşmeye uygun olduğundan sonuç "uyumlu" görünüyordu — **19 şema sapması bu
+şekilde maskelenmişti.**
 
 ## C1. Liste envelope'u dokümandan yapısal olarak farklı — YÜKSEK ÖNCELİK
 
@@ -184,6 +190,43 @@ Departmanı olmayan kullanıcı `null` döndürüyor; şema `string` diyor. Tip 
 
 `/v1/auth/me` → `tenantId: null` multi-tenant bir sistemde ayrıca teyit gerektirir
 (test: `test_me_carries_tenant_context`, xfail olarak izleniyor).
+
+## C2c. `permissions` üç ayrı şekle sahip — YÜKSEK ÖNCELİK
+
+Aynı kavram üç farklı yapıda dönüyor:
+
+| Kaynak | Şekil |
+|---|---|
+| `GET /v1/auth/me` (canlı) | `["DASHBOARD_VIEW", "REQUEST_VIEW", …]` — düz string dizisi |
+| `GET /v1/roles/{roleId}` (canlı) | `[{roleId, permissionId, permission:{id, code, category, description}}]` |
+| `GET /v1/roles/{roleId}` (doküman) | `[{id, code, category}]` |
+
+Canlı yanıt **ORM join satırını** (`role_permissions`) olduğu gibi dışa veriyor;
+gerçek izin bir seviye daha derinde (`permission.code`). Doküman düz nesne dizisi
+gösteriyor.
+
+**Etki:** FE `permissions[i].code` okuyorsa `undefined` alır —
+`permissions[i].permission.code` yazması gerekir. Şema doğrulaması bu uçta
+**309 hata** üretti (103 izin × 3 eksik alan), yani en yüksek sapmalı uç.
+
+**Öneri:** join satırı yerine düzleştirilmiş bir DTO dönülmeli ve `permissions`
+temsili `/auth/me` ile hizalanmalı.
+
+## C2d. Detay uçlarında yaygın nullable eksiği
+
+Gerçek ID ile çağrılan detay uçlarında, doğal olarak boş olabilen alanlar `null`
+dönüyor ama şema dolu tip bekliyor:
+
+| Endpoint | `null` dönen alanlar |
+|---|---|
+| `GET /v1/tasks/{taskId}` | `assignedTo`, `assignedUser`, `dueDate`, `project` |
+| `GET /v1/quotes/{quoteId}` | `cancelReason`, `cancelComment`, `cancelledAt`, `cancelledByUser` |
+| `GET /v1/customers/{customerId}` | `taxNumber`, `taxOffice`, `vipProfile` |
+
+Atanmamış görev, iptal edilmemiş teklif, bireysel müşteri — hepsi normal durumlar.
+Alanlar `nullable` işaretlenmeli. Ayrıca `GET /v1/tasks/{taskId}` yanıtında
+`requestService.checkInDate` sözleşmede zorunlu ama canlıda yok, ve
+`GET /v1/quotes/{quoteId}` alan adı canlıda `quoteCode`, dokümanda `code`.
 
 ## C3. Detay uçlarında 404 dokümante değil (32 operasyon)
 
