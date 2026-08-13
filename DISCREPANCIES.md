@@ -396,6 +396,26 @@ Test: `test_crud_customers.py::test_documented_example_is_accepted` (`xfail`).
 > (`forbidNonWhitelisted`). Mass-assignment denemesi de başarısız oldu — gövdede
 > gönderilen `tenantId` ve `id` kabul edilmedi. Güvenlik duruşu bu noktada doğru.
 
+## C10. Zorunlu query parametreleri sözleşmede opsiyonel görünüyor
+
+`GET /v1/calendar/events` parametresiz çağrıldığında **400** dönüyor:
+
+```
+year alanı en az 2000 olmalıdır.  ·  year alanı en fazla 2100 olabilir.
+```
+
+Ama sözleşmede `year` ve `month` **`required: false`**. Sebep: Postman koleksiyonu
+query parametrelerinin zorunluluğunu ifade etmiyor, bu yüzden dönüştürücü hepsini
+opsiyonel işaretliyor.
+
+**Etki:** Sözleşmeye bakan bir istemci parametresiz istek atıp 400 alır. Ayrıca
+otomatik araçlar (sweep, kart koşumu) parametre göndermezse **yanlış bulgu** üretir —
+bu tuzağa bir kez düştüm, kart koşumu artık dokümante query örneklerini gönderiyor.
+
+Ek olarak `startDate`/`endDate` **tanınmıyor** (`alanı tanınmıyor`), yani takvim ucu
+tarih aralığı değil yıl/ay ile çalışıyor. Kartlarda tarih aralığı geçen yerler
+kontrol edilmeli.
+
 ## Açık sorular
 
 - **Canlı ortam adresi** — `BASE_URL` henüz tanımlı değil; canlı koşum yapılamadı.

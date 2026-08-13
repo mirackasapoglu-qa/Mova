@@ -2005,7 +2005,7 @@
         {
           "key": "TP-1088",
           "summary": "BE — Banner Görsel Alanının Tek Görsele (imageMobileFileId) İndirilmesi",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Görev",
           "assignee": "Samet Utku Olgun",
           "parent": "TP-397"
@@ -2158,7 +2158,7 @@
         {
           "key": "TP-1088",
           "summary": "BE — Banner Görsel Alanının Tek Görsele (imageMobileFileId) İndirilmesi",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Görev",
           "assignee": "Samet Utku Olgun",
           "parent": "TP-397"
@@ -2327,7 +2327,7 @@
         {
           "key": "TP-1088",
           "summary": "BE — Banner Görsel Alanının Tek Görsele (imageMobileFileId) İndirilmesi",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Görev",
           "assignee": "Samet Utku Olgun",
           "parent": "TP-397"
@@ -2473,7 +2473,7 @@
         {
           "key": "TP-1088",
           "summary": "BE — Banner Görsel Alanının Tek Görsele (imageMobileFileId) İndirilmesi",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Görev",
           "assignee": "Samet Utku Olgun",
           "parent": "TP-397"
@@ -7512,7 +7512,7 @@
         {
           "key": "TP-1058",
           "summary": "FE - Dropdown İçin Müşteri Listeleme Endpoint'i",
-          "status": "Yapılacaklar",
+          "status": "Devam Ediyor",
           "type": "Alt görev",
           "assignee": "Sunal Jabili",
           "parent": "TP-1056"
@@ -9291,7 +9291,7 @@
         {
           "key": "TP-1023",
           "summary": "FE — Proje Detay Masraflar Sekmesi Listeleme API Bağlantısı",
-          "status": "Devam Ediyor",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "Yasin Akbulut",
           "parent": "TP-1020"
@@ -9456,7 +9456,7 @@
         {
           "key": "TP-1025",
           "summary": "FE — Proje Detay Masraf Ekleme (Fiş Tarama) API Bağlantısı",
-          "status": "Devam Ediyor",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "Yasin Akbulut",
           "parent": "TP-1021"
@@ -9472,7 +9472,7 @@
         {
           "key": "TP-1027",
           "summary": "FE — Proje Detay Masraf Ekleme (Manuel) API Bağlantısı",
-          "status": "Devam Ediyor",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "Yasin Akbulut",
           "parent": "TP-1022"
@@ -9488,7 +9488,7 @@
         {
           "key": "TP-1121",
           "summary": "Masraf (Expense) Oluşturmada Ödeme Türü (paymentType) Eklenmesi",
-          "status": "Devam Ediyor",
+          "status": "Ready For Release",
           "type": "Görev",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-9"
@@ -9504,15 +9504,15 @@
         {
           "key": "TP-1123",
           "summary": "QA- Masraf (Expense) Oluşturmada Ödeme Türü (paymentType) Eklenmesi",
-          "status": "Test Blocked",
+          "status": "Ready For Release",
           "type": "Alt görev",
-          "assignee": "",
+          "assignee": "Murat Kocacık",
           "parent": "TP-1121"
         },
         {
           "key": "TP-1124",
           "summary": "FE- Masraf (Expense) Oluşturmada Ödeme Türü (paymentType) Eklenmesi",
-          "status": "Devam Ediyor",
+          "status": "Ready For Release",
           "type": "Alt görev",
           "assignee": "Yasin Akbulut",
           "parent": "TP-1121"
@@ -9579,7 +9579,7 @@
         {
           "key": "TP-1025",
           "summary": "FE — Proje Detay Masraf Ekleme (Fiş Tarama) API Bağlantısı",
-          "status": "Devam Ediyor",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "Yasin Akbulut",
           "parent": "TP-1021"
@@ -9669,7 +9669,7 @@
         {
           "key": "TP-1025",
           "summary": "FE — Proje Detay Masraf Ekleme (Fiş Tarama) API Bağlantısı",
-          "status": "Devam Ediyor",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "Yasin Akbulut",
           "parent": "TP-1021"
@@ -17600,7 +17600,7 @@
         {
           "key": "TP-827",
           "summary": "Talep — GET /v1/requests/:id Response'una availableTransitions Eklenmesi",
-          "status": "Yapılacaklar",
+          "status": "Ready For Release",
           "type": "Görev",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-3"
@@ -17608,7 +17608,7 @@
         {
           "key": "TP-829",
           "summary": "BE - Talep — GET /v1/requests/:id Response'una availableTransitions Eklenmesi",
-          "status": "Test",
+          "status": "Ready For Release",
           "type": "Alt görev",
           "assignee": "Enes Solak",
           "parent": "TP-827"
@@ -17616,7 +17616,7 @@
         {
           "key": "TP-830",
           "summary": "QA- Talep — GET /v1/requests/:id Response'una availableTransitions Eklenmesi",
-          "status": "Blocked",
+          "status": "Ready For Release",
           "type": "Alt görev",
           "assignee": "Murat Kocacık",
           "parent": "TP-827"
@@ -17632,7 +17632,7 @@
         {
           "key": "TP-863",
           "summary": "Talep — Statuslerın GET /v1/requests/:id Response'una availableTransitions dan alınması",
-          "status": "Test",
+          "status": "Ready For Release",
           "type": "Alt görev",
           "assignee": "Sunal Jabili",
           "parent": "TP-827"
@@ -18742,7 +18742,7 @@
         {
           "key": "TP-1072",
           "summary": "BE - CMS — Banka Yönetimi (Listeleme, Ekleme, Düzenleme, Silme)",
-          "status": "Yapılacaklar",
+          "status": "Devam Ediyor",
           "type": "Alt görev",
           "assignee": "Nihad Aliyev",
           "parent": "TP-1071"
@@ -18905,9 +18905,9 @@
         {
           "key": "TP-1147",
           "summary": "BE - Proje oluşturma sonrası bazı projelerde görevlerin proje ile ilişkilendirilmemesi",
-          "status": "Devam Ediyor",
+          "status": "Ready For Release",
           "type": "Hata",
-          "assignee": "İlker Oğuz",
+          "assignee": "Murat Kocacık",
           "parent": "TP-5"
         },
         {
@@ -18945,7 +18945,7 @@
         {
           "key": "TP-225",
           "summary": "GET /v1/tasks — departmentId, priority, assignedTo çoklu filtre ve overdue filtresi eklenmesi",
-          "status": "Ready For Release",
+          "status": "Tamam",
           "type": "Hikaye",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-6"
@@ -18961,7 +18961,7 @@
         {
           "key": "TP-243",
           "summary": "BE - GET /v1/tasks — departmentId, priority, assignedTo çoklu filtre ve overdue filtresi eklenmesi",
-          "status": "Ready For Release",
+          "status": "Tamam",
           "type": "Alt görev",
           "assignee": "Samet Utku Olgun",
           "parent": "TP-225"

@@ -108,6 +108,20 @@
   td.jk { color: var(--accent); font-weight: 600; }
   td.ext a { color: var(--dim); text-decoration: none; font-size: 13px; }
   td.ext a:hover { color: var(--accent); }
+  .eprow { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .eprow button { padding: 5px 12px; font-size: 12px; }
+  label.mini { font-size: 11px; color: var(--dim); margin: 0; white-space: nowrap; }
+  label.mini input { width: auto; }
+  .jres:not(:empty) { margin: 0 0 12px; }
+  .runbox { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
+            background: var(--bg); }
+  .cmpblk { margin-top: 10px; font-size: 13px; }
+  .fields { margin-top: 5px; line-height: 2; }
+  code.miss { color: var(--err); border: 1px solid var(--err); border-radius: 3px;
+              padding: 1px 5px; font-size: 11px; }
+  .desc { font-size: 13px; color: #c3cad6; max-height: 260px; overflow-y: auto;
+          white-space: pre-wrap; line-height: 1.6; }
+  details summary { cursor: pointer; }
   .inline { display: flex; gap: 8px; align-items: center; }
 </style>
 </head>
@@ -257,19 +271,24 @@ async function openJira(key) {
   const c = await api("/api/jira/" + encodeURIComponent(key));
   if (c.error) { $("#detail").innerHTML = `<div class="empty">${esc(c.error)}</div>`; return; }
 
-  const eps = (c.endpoints || []).map(e => {
+  const eps = (c.endpoints || []).map((e, i) => {
     if (!e.operations.length) {
       return `<div class="warnbox" style="margin-bottom:6px">
         <code>${esc(e.method)} ${esc(e.shape)}</code> — sözleşmede karşılığı <b>yok</b>.
-        Uç koleksiyonda eksik olabilir ya da kart eski bir yolu referans veriyor olabilir.</div>`;
+        Uç mevcut olmayabilir ya da kart eski bir yolu referans veriyor olabilir.</div>`;
     }
     return e.operations.map(o => `
-      <div class="oplink" data-op="${esc(o.key)}">
-        <span class="m ${o.method}">${o.method}</span>
-        <span class="p" style="flex:1">${esc(o.path)}</span>
-        <span class="s">${esc(o.service)}</span>
-        <span class="meta">aç →</span>
-      </div>`).join("");
+      <div class="eprow">
+        <div class="oplink" data-op="${esc(o.key)}" style="flex:1;margin:0">
+          <span class="m ${o.method}">${o.method}</span>
+          <span class="p" style="flex:1">${esc(o.path)}</span>
+          <span class="s">${esc(o.service)}</span>
+          <span class="meta">aç →</span>
+        </div>
+        ${o.mutating ? `<label class="inline mini"><input type="checkbox" class="jconfirm" data-i="${i}"> onay</label>` : ""}
+        <button class="jrun" data-i="${i}" data-mut="${o.mutating ? 1 : 0}">Çalıştır</button>
+      </div>
+      <div class="jres" data-i="${i}"></div>`).join("");
   }).join("");
 
   $("#detail").innerHTML = `
@@ -281,13 +300,91 @@ async function openJira(key) {
       &nbsp;·&nbsp;<a href="${esc(META.jiraBase)}/browse/${esc(c.key)}" target="_blank">Jira'da aç</a>
     </div>
     <section><h3>Özet</h3><p style="margin:0">${esc(c.summary)}</p></section>
+
     <section>
       <h3>Kartın endpoint'leri (${(c.endpoints || []).length})</h3>
       ${eps || '<p class="meta" style="margin:0">Kart metninde endpoint referansı yok.</p>'}
-    </section>`;
+    </section>
+
+    ${c.expectedResponse ? `<section>
+      <h3>Kartın beklediği yanıt <span class="meta">(karşılaştırma referansı)</span></h3>
+      <pre>${esc(j(c.expectedResponse))}</pre></section>` : ""}
+
+    ${c.requestBody ? `<section>
+      <h3>Kartın istek gövdesi</h3><pre>${esc(j(c.requestBody))}</pre></section>` : ""}
+
+    ${(c.blocks || []).filter(b => b.kind === "parca" || b.kind === "endpoint").length ? `<section>
+      <h3>Diğer kod blokları</h3>
+      ${c.blocks.filter(b => b.kind === "parca" || b.kind === "endpoint")
+        .map(b => `<pre>${esc(b.text)}</pre>`).join("")}</section>` : ""}
+
+    ${c.description ? `<section>
+      <h3>Açıklama / kabul kriterleri</h3>
+      <div class="desc">${esc(c.description)}</div></section>` : ""}
+
+    ${(c.tables || []).length ? `<section>
+      <h3>Kart tabloları (${c.tables.length})</h3>
+      ${c.tables.map(tb => `<pre>${esc(tb)}</pre>`).join("")}</section>` : ""}`;
 
   document.querySelectorAll("[data-op]").forEach(el =>
     el.onclick = () => { setMode("ep"); openCard(el.dataset.op); });
+  document.querySelectorAll(".jrun").forEach(el =>
+    el.onclick = () => runFromCard(c, el));
+}
+
+// Kartin endpoint'ini kosar ve KARTIN beklentisiyle karsilastirir.
+async function runFromCard(card, btn) {
+  const i = btn.dataset.i;
+  const box = document.querySelector(`.jres[data-i="${i}"]`);
+  const confirmBox = document.querySelector(`.jconfirm[data-i="${i}"]`);
+
+  if (btn.dataset.mut === "1" && !(confirmBox && confirmBox.checked)) {
+    box.innerHTML = `<div class="verdict bad">Bu operasyon canlı veri değiştirir —
+      çalıştırmak için "onay" kutusunu işaretle.</div>`;
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = "Çalışıyor…";
+  box.innerHTML = `<div class="meta">istek gönderiliyor…</div>`;
+  const r = await api("/api/jira-run/" + encodeURIComponent(card.key),
+                      { endpointIndex: Number(i), confirm: !!(confirmBox && confirmBox.checked) });
+  btn.disabled = false; btn.textContent = "Çalıştır";
+
+  if (r.error) { box.innerHTML = `<div class="verdict bad">${esc(r.error)}</div>`; return; }
+
+  const cmp = r.comparison || {};
+  const cls = cmp.durum === "uyumlu" ? "ok" : cmp.durum === "uyumsuz" ? "bad" : "warn";
+
+  box.innerHTML = `
+    <div class="runbox">
+      <div class="meta">${esc(r.operation.method)} ${esc(r.operation.path)}
+        · HTTP <b>${r.status}</b> ${r.documented ? "(dokümante)" : "(DOKÜMANTE DEĞİL)"}
+        · ${r.elapsedMs} ms</div>
+
+      <div class="verdict ${cls}" style="margin-top:8px">${esc(cmp.verdict || "—")}</div>
+
+      ${cmp.eksik?.length ? `<div class="cmpblk"><b>Kartta var, canlıda YOK (${cmp.eksik.length})</b>
+        <div class="fields">${cmp.eksik.map(f => `<code class="miss">${esc(f)}</code>`).join(" ")}</div></div>` : ""}
+
+      ${cmp.tipFarki?.length ? `<div class="cmpblk"><b>Tip farkı (${cmp.tipFarki.length})</b>
+        <table class="jt">${cmp.tipFarki.map(m => `<tr>
+          <td><code>${esc(m.alan)}</code></td>
+          <td class="ty">kart: <b>${esc(m.beklenen)}</b></td>
+          <td class="ty">canlı: <b>${esc(m.gelen)}</b></td></tr>`).join("")}</table></div>` : ""}
+
+      ${cmp.notlar?.length ? cmp.notlar.map(n =>
+        `<div class="warnbox" style="margin:8px 0 0">${esc(n)}</div>`).join("") : ""}
+
+      ${r.findings?.length ? `<div class="cmpblk"><b>Otomatik yorum</b>
+        <span class="meta">${esc(r.findingsSummary || "")}</span>
+        ${r.findings.map(f => `<div class="finding ${esc(f.severity)}">
+          <b><span class="sev ${esc(f.severity)}">${esc(f.severity)}</span>${esc(f.baslik)}</b>
+          <p>${esc(f.aciklama)}</p>
+          ${f.oneri ? `<div class="oneri">→ ${esc(f.oneri)}</div>` : ""}</div>`).join("")}</div>` : ""}
+
+      <details style="margin-top:8px"><summary class="meta">canlı yanıt (PII maskeli)</summary>
+        <pre>${esc(j(r.body))}</pre></details>
+    </div>`;
 }
 
 function setAuth(on, src) {

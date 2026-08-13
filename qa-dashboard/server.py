@@ -45,6 +45,7 @@ except ImportError:
 
 # Otomatik yorum motoru (ayni dizin — server.py script olarak kosuyor)
 from analyze import analyze as analyze_result, summarize as summarize_findings
+from compare import compare_card_to_live
 
 # Paylasilan cozumleyici (contract/sweep.py ile ayni kod)
 import sys as _sys
@@ -222,6 +223,65 @@ def run_card(card, payload):
     return result
 
 
+def run_jira_card(jira_card, payload):
+    """Kartin endpoint'ini kosar ve KARTIN BEKLENTISIYLE karsilastirir.
+
+    Uc gorunumundeki run_card ile farki: burada referans sozlesme degil, KART.
+    Kartin kod blogunda yazdigi beklenen response canli yanitla alan alan
+    karsilastirilir — "gelistirici ne vaat etti, API ne yapiyor" sorusu.
+    """
+    index = int(payload.get("endpointIndex") or 0)
+    endpoints = jira_card.get("endpoints") or []
+    if index >= len(endpoints):
+        return {"error": "kartta bu sirada endpoint yok"}
+
+    op_keys = endpoints[index].get("operations") or []
+    if not op_keys:
+        return {"error": f"'{endpoints[index].get('method')} "
+                         f"{endpoints[index].get('shape')}' sozlesmede eslesmiyor — "
+                         "uc mevcut olmayabilir ya da kart eski bir yolu referans veriyor"}
+
+    card = find_card(op_keys[0])
+    if not card:
+        return {"error": "operasyon registry'de bulunamadi"}
+
+    # Kartin kendi istek govdesi varsa onu kullan (mutating uclarda anlamli)
+    run_payload = dict(payload)
+    if card["mutating"] and jira_card.get("requestBody") and not payload.get("body"):
+        run_payload["body"] = jira_card["requestBody"]
+
+    # Dokumante query orneklerini gonder — bazi uclar bunlar olmadan 400 doner
+    # (orn. /v1/calendar/events year+month ister). Gondermezsek "kart uyumsuz"
+    # diye YANLIS bulgu uretirdik.
+    if not run_payload.get("query"):
+        documented_query = {q["name"]: q["example"]
+                            for q in (card.get("queryParams") or [])
+                            if q.get("example") is not None}
+        if documented_query:
+            run_payload["query"] = documented_query
+
+    # Path parametreleri verilmemisse canlidan cozumle
+    if not run_payload.get("pathParams") and card.get("pathParams"):
+        resolved = resolve_path_params(card)
+        if resolved.get("values"):
+            run_payload["pathParams"] = resolved["values"]
+
+    result = run_card(card, run_payload)
+    if result.get("error"):
+        return {**result, "operation": {"key": card["key"], "method": card["method"],
+                                        "path": card["path"]}}
+
+    result["operation"] = {"key": card["key"], "method": card["method"],
+                           "path": card["path"], "service": card["service"]}
+    result["comparison"] = compare_card_to_live(
+        jira_card.get("expectedResponse"),
+        result.get("body") if isinstance(result.get("body"), dict) else None,
+        result.get("status"),
+        card.get("documentedStatuses"),
+    )
+    return result
+
+
 def resolve_path_params(card):
     """Path parametrelerini canlidan cozumler (paylasilan qa_core.resolver)."""
     if not BASE_URL:
@@ -352,6 +412,9 @@ class Handler(BaseHTTPRequestHandler):
                 enriched.append({**endpoint, "operations": ops})
             return self._send({**card, "endpoints": enriched})
 
+        if self.path.startswith("/api/jiraverify/"):
+            return self._send({"error": "POST kullanilmali"}, 405)
+
         if self.path.startswith("/api/card/"):
             key = urllib_unquote(self.path[len("/api/card/"):])
             card = find_card(key)
@@ -384,6 +447,13 @@ class Handler(BaseHTTPRequestHandler):
             if not card:
                 return self._send({"error": "kart bulunamadi"}, 404)
             return self._send(resolve_path_params(card))
+
+        if self.path.startswith("/api/jira-run/"):
+            key = urllib_unquote(self.path[len("/api/jira-run/"):])
+            card = find_jira_card(key)
+            if not card:
+                return self._send({"error": "kart bulunamadi"}, 404)
+            return self._send(run_jira_card(card, payload))
 
         if self.path.startswith("/api/run/"):
             key = urllib_unquote(self.path[len("/api/run/"):])

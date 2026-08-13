@@ -51,6 +51,22 @@ Sağ üstteki **Uçlar / Jira kartları** düğmesiyle panelin ekseni değişir
   `Jira: Test'te` filtresiyle QA'in iş kuyruğu (105 uç) süzülebilir,
   `Jira kartı yok` ile kapsanmayan 79 uç görülür.
 
+## Kart ↔ canlı karşılaştırması
+
+Jira kartları beklenen response'u kod bloğu olarak yazıyor — **168 kartta** var,
+**129'u** hem beklenen yanıta hem eşleşmiş endpoint'e sahip. Kart görünümünde her
+endpoint satırındaki **Çalıştır** butonu ucu koşar ve yanıtı *kartın kendi
+beklentisiyle* karşılaştırır (`compare.py`):
+
+- **Kartta var, canlıda yok** → eksik alan listesi
+- **Tip farkı** → kart `integer` demiş, canlı `string` dönmüş
+- **Fazla alan** → canlıda kartta olmayan alanlar (kart eskimiş olabilir — uyarı, hata değil)
+
+Değerler değil **tipler** karşılaştırılır: kart örnekleri yer tutucu taşır (`uuid`,
+`$string`). `id`/`createdAt` gibi her yanıtta değişen alanlar yok sayılır.
+Mutating uçlar onay kutusu ister ve kartın kendi istek gövdesini kullanır.
+Deterministik ve birim testli (`tests/test_compare.py`, 12 test).
+
 ## Güvenlik duruşu
 
 - Token **yalnızca bellekte** tutulur, diske yazılmaz.

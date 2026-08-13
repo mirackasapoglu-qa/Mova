@@ -75,6 +75,68 @@ def adf_text(node):
     return " ".join(out)
 
 
+def adf_blocks(node):
+    """ADF'yi yapisal bloklara ayirir: kod bloklari ayri tutulur.
+
+    Kartlar beklenen response'u kod blogu olarak yaziyor; duz metne cevirirken
+    bu yapi kayboluyordu. Karsilastirma icin JSON'i ayri saklamak gerekiyor.
+    """
+    code, tables = [], []
+
+    def walk(item):
+        if isinstance(item, dict):
+            kind = item.get("type")
+            if kind == "codeBlock":
+                text = "".join(c.get("text", "") for c in item.get("content", []))
+                if text.strip():
+                    code.append(text)
+                return
+            if kind == "table":
+                cells = []
+
+                def collect(node2):
+                    if isinstance(node2, dict):
+                        if node2.get("type") == "text":
+                            cells.append(node2.get("text", ""))
+                        for value in node2.values():
+                            collect(value)
+                    elif isinstance(node2, list):
+                        for value in node2:
+                            collect(value)
+
+                collect(item)
+                if cells:
+                    tables.append(" | ".join(cells))
+                return
+            for value in item.values():
+                walk(value)
+        elif isinstance(item, list):
+            for value in item:
+                walk(value)
+
+    walk(node)
+    return code, tables
+
+
+def classify_code_block(text):
+    """Kod blogunu siniflandirir: response / request / endpoint / parca."""
+    stripped = text.strip()
+
+    if ENDPOINT_RE.match(stripped):
+        return "endpoint", None
+
+    try:
+        parsed = json.loads(stripped)
+    except ValueError:
+        return "parca", None
+
+    if isinstance(parsed, dict) and "success" in parsed:
+        return "response", parsed
+    if isinstance(parsed, dict) and "data" in parsed:
+        return "response", parsed
+    return "request", parsed
+
+
 def shape(path):
     """Yolu karsilastirilabilir bicime indirger."""
     cleaned = path.split("?")[0].split("#")[0].rstrip("/")
@@ -171,6 +233,24 @@ def main():
             "parent": (fields.get("parent") or {}).get("key", ""),
         }
 
+        code_blocks, tables = adf_blocks(fields.get("description"))
+        classified, expected_response, request_body = [], None, None
+        for block in code_blocks:
+            kind, parsed = classify_code_block(block)
+            classified.append({"kind": kind, "text": block[:2500]})
+            if kind == "response" and expected_response is None:
+                expected_response = parsed
+            elif kind == "request" and request_body is None:
+                request_body = parsed
+
+        entry_detail = {
+            "description": adf_text(fields.get("description"))[:4000],
+            "blocks": classified,
+            "tables": tables[:6],
+            "expectedResponse": expected_response,
+            "requestBody": request_body,
+        }
+
         endpoints = extract_endpoints(issue)
         card_endpoints = []
         hit = False
@@ -191,7 +271,8 @@ def main():
                 })
             matched_cards += 1 if hit else 0
 
-        jira_cards.append({**entry, "endpoints": card_endpoints, "matched": hit})
+        jira_cards.append({**entry, **entry_detail,
+                           "endpoints": card_endpoints, "matched": hit})
 
     total_links = sum(len(v) for v in links.values())
     print(f"\nendpoint gecen kart : {with_endpoint}")
