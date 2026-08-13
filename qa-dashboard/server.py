@@ -52,6 +52,7 @@ import sys as _sys
 _sys.path.insert(0, str(pathlib.Path(__file__).parent.parent))
 from qa_core.resolver import PathParamResolver, PLACEHOLDER_ID  # noqa: E402
 from qa_core.rules import inventory as rules_inventory  # noqa: E402
+from qa_core import ai_review  # noqa: E402
 
 HERE = pathlib.Path(__file__).parent
 ROOT = HERE.parent
@@ -379,6 +380,11 @@ class Handler(BaseHTTPRequestHandler):
                                   if j.get("status") in ("Test", "Test Blocked")),
             } for c in cards])
 
+        if self.path == "/api/ai-status":
+            ok, reason = ai_review.available()
+            return self._send({"available": ok, "reason": reason,
+                               "model": ai_review.MODEL, "effort": ai_review.EFFORT})
+
         if self.path == "/api/rules":
             try:
                 return self._send(rules_inventory())
@@ -454,6 +460,16 @@ class Handler(BaseHTTPRequestHandler):
             if not card:
                 return self._send({"error": "kart bulunamadi"}, 404)
             return self._send(resolve_path_params(card))
+
+        if self.path.startswith("/api/ai-review/"):
+            key = urllib_unquote(self.path[len("/api/ai-review/"):])
+            card = find_jira_card(key)
+            if not card:
+                return self._send({"error": "kart bulunamadi"}, 404)
+            run_result = payload.get("run")
+            if not run_result:
+                return self._send({"error": "once uctan bir kosum yapilmali"}, 400)
+            return self._send(ai_review.review(card, run_result))
 
         if self.path.startswith("/api/jira-run/"):
             key = urllib_unquote(self.path[len("/api/jira-run/"):])

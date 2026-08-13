@@ -67,6 +67,26 @@ Değerler değil **tipler** karşılaştırılır: kart örnekleri yer tutucu ta
 Mutating uçlar onay kutusu ister ve kartın kendi istek gövdesini kullanır.
 Deterministik ve birim testli (`tests/test_compare.py`, 12 test).
 
+## Claude değerlendirmesi (opsiyonel)
+
+Kural motorları **yapısal** şeyleri yakalar: eksik alan, tip farkı, envelope, status.
+Yakalayamadıkları şey kartların **düz metin kabul kriterleridir** — "sidebar rol bazlı
+görünürlüğe göre filtrelenmeli", "iptal edilen teklif tekrar gönderilemez". Bunlar JSON
+diff'iyle doğrulanamaz.
+
+Koşum sonucunun altındaki **Claude ile değerlendir** butonu kartın açıklamasını ve canlı
+yanıtı Claude'a verip her kriteri `sağlanıyor / sağlanmıyor / doğrulanamadı` olarak
+işaretletir, her biri için yanıttan kanıt ister.
+
+- **Bu katman kanıt değil, yorumdur.** Verdict'i kurallar belirler; LLM çıktısı ayrı bir
+  kutuda "yorum" etiketiyle gösterilir. Deterministik motorlar tekrarlanabilir, bu değil.
+- Yapısal bulgular prompt'a verilir ki model onları tekrar etmesin.
+- Yanıt gövdesi **PII maskelendikten sonra** gönderilir.
+- **Veri sınırı:** bu çağrı kart metnini ve maskelenmiş yanıtı Anthropic API'ye gönderir —
+  kurum verisi altyapı dışına çıkar. Kullanmadan önce kabul edilmeli.
+- Kimlik: `ANTHROPIC_API_KEY` ya da `ant auth login` profili. Yoksa buton nedenini söyler.
+- Ayarlanabilir: `QA_AI_MODEL` (varsayılan `claude-opus-5`), `QA_AI_EFFORT` (`medium`).
+
 ## Güvenlik duruşu
 
 - Token **yalnızca bellekte** tutulur, diske yazılmaz.
