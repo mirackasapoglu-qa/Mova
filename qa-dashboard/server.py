@@ -275,12 +275,24 @@ def run_jira_card(jira_card, payload):
 
     result["operation"] = {"key": card["key"], "method": card["method"],
                            "path": card["path"], "service": card["service"]}
-    result["comparison"] = compare_card_to_live(
-        jira_card.get("expectedResponse"),
-        result.get("body") if isinstance(result.get("body"), dict) else None,
-        result.get("status"),
-        card.get("documentedStatuses"),
-    )
+
+    # Kartin beklenen yanit ornegi YALNIZCA birincil uca aittir. Destekleyici
+    # uclara (dropdown icin /v1/lookups/enums gibi) uygulamak sahte "uyumsuz"
+    # uretir — toplu kosumda 27 uyumsuzun cogu bu yuzden cikmisti.
+    if endpoints[index].get("primary"):
+        result["comparison"] = compare_card_to_live(
+            jira_card.get("expectedResponse"),
+            result.get("body") if isinstance(result.get("body"), dict) else None,
+            result.get("status"),
+            card.get("documentedStatuses"),
+        )
+    else:
+        result["comparison"] = {
+            "durum": "dogrulanamadi", "eksik": [], "tipFarki": [], "fazla": [],
+            "notlar": [],
+            "verdict": "Bu uc kartin BIRINCIL ucu degil (destekleyici uc) — "
+                       "kartin beklenen yaniti buna ait olmadigi icin karsilastirilmadi.",
+        }
     return result
 
 

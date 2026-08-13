@@ -3594,7 +3594,7 @@
         {
           "key": "TP-937",
           "summary": "QA- Etkinlik Formu — Program Türü, Lokasyon, Sınıf ve Kontenjan Alan Değişiklikleri",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "",
           "parent": "TP-934"
@@ -3626,7 +3626,7 @@
         {
           "key": "TP-945",
           "summary": "QA - Etkinlik Formu — Yayın Tarihi Validasyonu",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "",
           "parent": "TP-942"
@@ -4089,7 +4089,7 @@
         {
           "key": "TP-937",
           "summary": "QA- Etkinlik Formu — Program Türü, Lokasyon, Sınıf ve Kontenjan Alan Değişiklikleri",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "",
           "parent": "TP-934"
@@ -4121,7 +4121,7 @@
         {
           "key": "TP-941",
           "summary": "QA - Etkinlik Formu — Fiyat Grupları Bölümü",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "",
           "parent": "TP-938"
@@ -4350,7 +4350,7 @@
         {
           "key": "TP-937",
           "summary": "QA- Etkinlik Formu — Program Türü, Lokasyon, Sınıf ve Kontenjan Alan Değişiklikleri",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "",
           "parent": "TP-934"
@@ -4382,7 +4382,7 @@
         {
           "key": "TP-945",
           "summary": "QA - Etkinlik Formu — Yayın Tarihi Validasyonu",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "",
           "parent": "TP-942"
@@ -4995,7 +4995,7 @@
         {
           "key": "TP-752",
           "summary": "Maya CMS — Okul Yönetimi — Okul Düzenleme",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Görev",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-397"
@@ -5035,7 +5035,7 @@
         {
           "key": "TP-856",
           "summary": "QA- Maya CMS — Okul Yönetimi — Okul Düzenleme",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "",
           "parent": "TP-752"
@@ -5101,7 +5101,7 @@
         {
           "key": "TP-752",
           "summary": "Maya CMS — Okul Yönetimi — Okul Düzenleme",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Görev",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-397"
@@ -5125,7 +5125,7 @@
         {
           "key": "TP-856",
           "summary": "QA- Maya CMS — Okul Yönetimi — Okul Düzenleme",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "",
           "parent": "TP-752"
@@ -6094,7 +6094,7 @@
         {
           "key": "TP-752",
           "summary": "Maya CMS — Okul Yönetimi — Okul Düzenleme",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Görev",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-397"
@@ -6134,7 +6134,7 @@
         {
           "key": "TP-856",
           "summary": "QA- Maya CMS — Okul Yönetimi — Okul Düzenleme",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "",
           "parent": "TP-752"
@@ -6293,7 +6293,7 @@
         {
           "key": "TP-752",
           "summary": "Maya CMS — Okul Yönetimi — Okul Düzenleme",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Görev",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-397"
@@ -6333,7 +6333,7 @@
         {
           "key": "TP-856",
           "summary": "QA- Maya CMS — Okul Yönetimi — Okul Düzenleme",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "",
           "parent": "TP-752"
@@ -6442,7 +6442,7 @@
         {
           "key": "TP-752",
           "summary": "Maya CMS — Okul Yönetimi — Okul Düzenleme",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Görev",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-397"
@@ -6466,7 +6466,7 @@
         {
           "key": "TP-856",
           "summary": "QA- Maya CMS — Okul Yönetimi — Okul Düzenleme",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "",
           "parent": "TP-752"
@@ -9283,7 +9283,7 @@
         {
           "key": "TP-1020",
           "summary": "FE — Proje Detay Masraflar Sekmesi Listeleme API Bağlantısı",
-          "status": "Yapılacaklar",
+          "status": "Ready For Release",
           "type": "Görev",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-5"
@@ -9291,7 +9291,7 @@
         {
           "key": "TP-1023",
           "summary": "FE — Proje Detay Masraflar Sekmesi Listeleme API Bağlantısı",
-          "status": "Test",
+          "status": "Ready For Release",
           "type": "Alt görev",
           "assignee": "Yasin Akbulut",
           "parent": "TP-1020"
@@ -9299,9 +9299,9 @@
         {
           "key": "TP-1024",
           "summary": "QA — Proje Detay Masraflar Sekmesi Listeleme API Bağlantısı",
-          "status": "Yapılacaklar",
+          "status": "Ready For Release",
           "type": "Alt görev",
-          "assignee": "Rahime Gedik",
+          "assignee": "Murat Kocacık",
           "parent": "TP-1020"
         },
         {
@@ -9440,7 +9440,7 @@
         {
           "key": "TP-1021",
           "summary": "FE — Proje Detay Masraf Ekleme (Fiş Tarama) API Bağlantısı",
-          "status": "Yapılacaklar",
+          "status": "Ready For Release",
           "type": "Görev",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-5"
@@ -9448,7 +9448,7 @@
         {
           "key": "TP-1022",
           "summary": "FE — Proje Detay Masraf Ekleme (Manuel) API Bağlantısı",
-          "status": "Yapılacaklar",
+          "status": "Ready For Release",
           "type": "Görev",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-5"
@@ -9456,7 +9456,7 @@
         {
           "key": "TP-1025",
           "summary": "FE — Proje Detay Masraf Ekleme (Fiş Tarama) API Bağlantısı",
-          "status": "Test",
+          "status": "Ready For Release",
           "type": "Alt görev",
           "assignee": "Yasin Akbulut",
           "parent": "TP-1021"
@@ -9464,15 +9464,15 @@
         {
           "key": "TP-1026",
           "summary": "QA — Proje Detay Masraf Ekleme (Fiş Tarama) API Bağlantısı",
-          "status": "Yapılacaklar",
+          "status": "Ready For Release",
           "type": "Alt görev",
-          "assignee": "Rahime Gedik",
+          "assignee": "Murat Kocacık",
           "parent": "TP-1021"
         },
         {
           "key": "TP-1027",
           "summary": "FE — Proje Detay Masraf Ekleme (Manuel) API Bağlantısı",
-          "status": "Test",
+          "status": "Ready For Release",
           "type": "Alt görev",
           "assignee": "Yasin Akbulut",
           "parent": "TP-1022"
@@ -9480,9 +9480,9 @@
         {
           "key": "TP-1028",
           "summary": "QA — Proje Detay Masraf Ekleme (Manuel) API Bağlantısı",
-          "status": "Yapılacaklar",
+          "status": "Ready For Release",
           "type": "Alt görev",
-          "assignee": "Rahime Gedik",
+          "assignee": "Murat Kocacık",
           "parent": "TP-1022"
         },
         {
@@ -9571,7 +9571,7 @@
         {
           "key": "TP-1021",
           "summary": "FE — Proje Detay Masraf Ekleme (Fiş Tarama) API Bağlantısı",
-          "status": "Yapılacaklar",
+          "status": "Ready For Release",
           "type": "Görev",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-5"
@@ -9579,7 +9579,7 @@
         {
           "key": "TP-1025",
           "summary": "FE — Proje Detay Masraf Ekleme (Fiş Tarama) API Bağlantısı",
-          "status": "Test",
+          "status": "Ready For Release",
           "type": "Alt görev",
           "assignee": "Yasin Akbulut",
           "parent": "TP-1021"
@@ -9587,9 +9587,9 @@
         {
           "key": "TP-1026",
           "summary": "QA — Proje Detay Masraf Ekleme (Fiş Tarama) API Bağlantısı",
-          "status": "Yapılacaklar",
+          "status": "Ready For Release",
           "type": "Alt görev",
-          "assignee": "Rahime Gedik",
+          "assignee": "Murat Kocacık",
           "parent": "TP-1021"
         },
         {
@@ -9661,7 +9661,7 @@
         {
           "key": "TP-1021",
           "summary": "FE — Proje Detay Masraf Ekleme (Fiş Tarama) API Bağlantısı",
-          "status": "Yapılacaklar",
+          "status": "Ready For Release",
           "type": "Görev",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-5"
@@ -9669,7 +9669,7 @@
         {
           "key": "TP-1025",
           "summary": "FE — Proje Detay Masraf Ekleme (Fiş Tarama) API Bağlantısı",
-          "status": "Test",
+          "status": "Ready For Release",
           "type": "Alt görev",
           "assignee": "Yasin Akbulut",
           "parent": "TP-1021"
@@ -9677,9 +9677,9 @@
         {
           "key": "TP-1026",
           "summary": "QA — Proje Detay Masraf Ekleme (Fiş Tarama) API Bağlantısı",
-          "status": "Yapılacaklar",
+          "status": "Ready For Release",
           "type": "Alt görev",
-          "assignee": "Rahime Gedik",
+          "assignee": "Murat Kocacık",
           "parent": "TP-1021"
         }
       ]
@@ -10179,7 +10179,7 @@
         {
           "key": "TP-752",
           "summary": "Maya CMS — Okul Yönetimi — Okul Düzenleme",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Görev",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-397"
@@ -10267,7 +10267,7 @@
         {
           "key": "TP-856",
           "summary": "QA- Maya CMS — Okul Yönetimi — Okul Düzenleme",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "",
           "parent": "TP-752"
@@ -11068,7 +11068,7 @@
         {
           "key": "TP-937",
           "summary": "QA- Etkinlik Formu — Program Türü, Lokasyon, Sınıf ve Kontenjan Alan Değişiklikleri",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "",
           "parent": "TP-934"
@@ -11630,7 +11630,7 @@
         {
           "key": "TP-630",
           "summary": "FE - Talep İptal Edildiğinde Bağlı Görevlerin Otomatik Kapatılması",
-          "status": "Ready For Deploy",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "Sunal Jabili",
           "parent": "TP-628"
@@ -12526,7 +12526,7 @@
         {
           "key": "TP-711",
           "summary": "FE — Talep Oluşturma Konum Alanları Google Places API Entegrasyonu",
-          "status": "Ready For Deploy",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "Sunal Jabili",
           "parent": "TP-709"
@@ -16433,7 +16433,7 @@
         {
           "key": "TP-386",
           "summary": "Taslak Talep Kaydedilebilmesi",
-          "status": "Failed",
+          "status": "Ready For Release",
           "type": "Hikaye",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-3"
@@ -16449,7 +16449,7 @@
         {
           "key": "TP-388",
           "summary": "FE - Taslak Talep Kaydedilebilmesi",
-          "status": "Test",
+          "status": "Ready For Release",
           "type": "Alt görev",
           "assignee": "Sunal Jabili",
           "parent": "TP-386"
@@ -16457,9 +16457,9 @@
         {
           "key": "TP-389",
           "summary": "QA - Taslak Talep Kaydedilebilmesi",
-          "status": "Test Blocked",
+          "status": "Ready For Release",
           "type": "Alt görev",
-          "assignee": "Musa Soyucak",
+          "assignee": "Murat Kocacık",
           "parent": "TP-386"
         },
         {
@@ -16537,7 +16537,7 @@
         {
           "key": "TP-630",
           "summary": "FE - Talep İptal Edildiğinde Bağlı Görevlerin Otomatik Kapatılması",
-          "status": "Ready For Deploy",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "Sunal Jabili",
           "parent": "TP-628"
@@ -16766,7 +16766,7 @@
         {
           "key": "TP-386",
           "summary": "Taslak Talep Kaydedilebilmesi",
-          "status": "Failed",
+          "status": "Ready For Release",
           "type": "Hikaye",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-3"
@@ -16782,7 +16782,7 @@
         {
           "key": "TP-388",
           "summary": "FE - Taslak Talep Kaydedilebilmesi",
-          "status": "Test",
+          "status": "Ready For Release",
           "type": "Alt görev",
           "assignee": "Sunal Jabili",
           "parent": "TP-386"
@@ -16790,9 +16790,9 @@
         {
           "key": "TP-389",
           "summary": "QA - Taslak Talep Kaydedilebilmesi",
-          "status": "Test Blocked",
+          "status": "Ready For Release",
           "type": "Alt görev",
-          "assignee": "Musa Soyucak",
+          "assignee": "Murat Kocacık",
           "parent": "TP-386"
         },
         {
@@ -16952,7 +16952,7 @@
         {
           "key": "TP-386",
           "summary": "Taslak Talep Kaydedilebilmesi",
-          "status": "Failed",
+          "status": "Ready For Release",
           "type": "Hikaye",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-3"
@@ -16968,7 +16968,7 @@
         {
           "key": "TP-388",
           "summary": "FE - Taslak Talep Kaydedilebilmesi",
-          "status": "Test",
+          "status": "Ready For Release",
           "type": "Alt görev",
           "assignee": "Sunal Jabili",
           "parent": "TP-386"
@@ -16976,9 +16976,9 @@
         {
           "key": "TP-389",
           "summary": "QA - Taslak Talep Kaydedilebilmesi",
-          "status": "Test Blocked",
+          "status": "Ready For Release",
           "type": "Alt görev",
-          "assignee": "Musa Soyucak",
+          "assignee": "Murat Kocacık",
           "parent": "TP-386"
         },
         {
@@ -17024,7 +17024,7 @@
         {
           "key": "TP-386",
           "summary": "Taslak Talep Kaydedilebilmesi",
-          "status": "Failed",
+          "status": "Ready For Release",
           "type": "Hikaye",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-3"
@@ -17040,7 +17040,7 @@
         {
           "key": "TP-388",
           "summary": "FE - Taslak Talep Kaydedilebilmesi",
-          "status": "Test",
+          "status": "Ready For Release",
           "type": "Alt görev",
           "assignee": "Sunal Jabili",
           "parent": "TP-386"
@@ -17048,9 +17048,9 @@
         {
           "key": "TP-389",
           "summary": "QA - Taslak Talep Kaydedilebilmesi",
-          "status": "Test Blocked",
+          "status": "Ready For Release",
           "type": "Alt görev",
-          "assignee": "Musa Soyucak",
+          "assignee": "Murat Kocacık",
           "parent": "TP-386"
         }
       ]
@@ -17123,7 +17123,7 @@
         {
           "key": "TP-386",
           "summary": "Taslak Talep Kaydedilebilmesi",
-          "status": "Failed",
+          "status": "Ready For Release",
           "type": "Hikaye",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-3"
@@ -17139,7 +17139,7 @@
         {
           "key": "TP-388",
           "summary": "FE - Taslak Talep Kaydedilebilmesi",
-          "status": "Test",
+          "status": "Ready For Release",
           "type": "Alt görev",
           "assignee": "Sunal Jabili",
           "parent": "TP-386"
@@ -17147,9 +17147,9 @@
         {
           "key": "TP-389",
           "summary": "QA - Taslak Talep Kaydedilebilmesi",
-          "status": "Test Blocked",
+          "status": "Ready For Release",
           "type": "Alt görev",
-          "assignee": "Musa Soyucak",
+          "assignee": "Murat Kocacık",
           "parent": "TP-386"
         }
       ]
@@ -17544,7 +17544,7 @@
         {
           "key": "TP-630",
           "summary": "FE - Talep İptal Edildiğinde Bağlı Görevlerin Otomatik Kapatılması",
-          "status": "Ready For Deploy",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "Sunal Jabili",
           "parent": "TP-628"
@@ -17843,7 +17843,7 @@
         {
           "key": "TP-630",
           "summary": "FE - Talep İptal Edildiğinde Bağlı Görevlerin Otomatik Kapatılması",
-          "status": "Ready For Deploy",
+          "status": "Test",
           "type": "Alt görev",
           "assignee": "Sunal Jabili",
           "parent": "TP-628"
@@ -17943,7 +17943,7 @@
         {
           "key": "TP-796",
           "summary": "Talepler — Aktiviteler Sekmesi",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Görev",
           "assignee": "Ahmet Ertuğral",
           "parent": "TP-3"
@@ -17959,9 +17959,9 @@
         {
           "key": "TP-798",
           "summary": "QA - Talepler — Aktiviteler Sekmesi",
-          "status": "Yapılacaklar",
+          "status": "Test",
           "type": "Alt görev",
-          "assignee": "",
+          "assignee": "Murat Kocacık",
           "parent": "TP-796"
         }
       ]
@@ -18742,7 +18742,7 @@
         {
           "key": "TP-1072",
           "summary": "BE - CMS — Banka Yönetimi (Listeleme, Ekleme, Düzenleme, Silme)",
-          "status": "Devam Ediyor",
+          "status": "Waiting For Review",
           "type": "Alt görev",
           "assignee": "Nihad Aliyev",
           "parent": "TP-1071"

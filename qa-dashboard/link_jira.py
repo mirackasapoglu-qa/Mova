@@ -181,16 +181,44 @@ def fetch_issues(jql):
     return issues
 
 
+# Destekleyici uclar: kartlarda baglam icin anilir, kartin konusu degildir
+SUPPORTING_RE = re.compile(r"^/v1/(lookups|auth|sidebar|health)\b")
+
+
 def extract_endpoints(issue):
-    """Karttan (metot, sekil) ciftlerini cikarir."""
+    """Karttan (metot, sekil) ciftlerini GECIS SIRASIYLA cikarir.
+
+    Sira onemli: kartin BIRINCIL ucunu belirlemek icin kullanilir. Bir kart
+    genelde birden fazla uc anar — biri konusu, digerleri destekleyici
+    (dropdown icin /v1/lookups/enums gibi). Kartin beklenen yanit ornegi
+    yalnizca BIRINCIL uca aittir; hepsine uygulamak sahte "uyumsuz" uretir.
+    """
     fields = issue["fields"]
-    text = (fields.get("summary") or "") + " " + adf_text(fields.get("description"))
-    found = set()
+    summary = fields.get("summary") or ""
+    text = summary + " \n " + adf_text(fields.get("description"))
+
+    ordered, seen = [], set()
     for method, path in ENDPOINT_RE.findall(text):
         normalized = shape(path)
-        if normalized not in IGNORED_SHAPES:
-            found.add((method.upper(), normalized))
-    return found
+        if normalized in IGNORED_SHAPES:
+            continue
+        pair = (method.upper(), normalized)
+        if pair not in seen:
+            seen.add(pair)
+            ordered.append(pair)
+    return ordered, summary
+
+
+def pick_primary(ordered, summary):
+    """Kartin birincil ucu: ozette gecen; yoksa aciklamada ilk gecen (destekleyiciler haric)."""
+    in_summary = {(m.upper(), shape(p)) for m, p in ENDPOINT_RE.findall(summary)}
+    for pair in ordered:
+        if pair in in_summary:
+            return pair
+    for pair in ordered:
+        if not SUPPORTING_RE.match(pair[1]):
+            return pair
+    return ordered[0] if ordered else None
 
 
 def main():
@@ -251,13 +279,14 @@ def main():
             "requestBody": request_body,
         }
 
-        endpoints = extract_endpoints(issue)
+        endpoints, summary_text = extract_endpoints(issue)
+        primary = pick_primary(endpoints, summary_text)
         card_endpoints = []
         hit = False
 
         if endpoints:
             with_endpoint += 1
-            for method, normalized in sorted(endpoints):
+            for method, normalized in endpoints:
                 op_keys = index.get((method, normalized)) or []
                 if op_keys:
                     hit = True
@@ -268,6 +297,7 @@ def main():
                     unmatched_examples[f"{method} {normalized}"].add(issue["key"])
                 card_endpoints.append({
                     "method": method, "shape": normalized, "operations": op_keys,
+                    "primary": (method, normalized) == primary,
                 })
             matched_cards += 1 if hit else 0
 
