@@ -44,12 +44,19 @@ CI, üretilmiş dosyaların güncel olduğunu doğrular; unutulursa build kırı
 ## Çalıştırma
 
 ```bash
+pytest                      # GÜVENLİ VARSAYILAN — mutating testler hariç
 pytest -m schema            # sözleşme iç tutarlılığı — AĞSIZ, ortam gerekmez
 pytest -m smoke             # kritik akışlar (canlı)
-pytest -m negative          # hata senaryoları (canlı)
-pytest -m "not mutating"    # varsayılan güvenli koşum
+pytest -m "security or boundary"
+pytest -m mutating          # CANLI VERİ YARATIR/SİLER — bilinçli tercih
 pytest tests/api/test_auth.py
 ```
+
+`pytest.ini` varsayılan olarak `-m "not mutating"` uygular; CRUD testleri ancak
+açıkça istenirse koşar. Mutating suite üç katmanlı korunur: **ortam kilidi**
+(`BASE_URL` test/dev'e benzemiyorsa suite tamamen atlanır), **garanti temizlik**
+(yaratılan her kayıt teardown'da silinir — test patlasa bile), **tanınabilir veri**
+(`QA-AUTO` öneki).
 
 Rapor: `reports/report.html`
 
@@ -78,6 +85,7 @@ gerektiren testler **skip** edilir — sessizce PASS geçmez.
 | `test_security.py` | JWT kurcalama, tenant izolasyonu (BOLA), enjeksiyon, bilgi sızıntısı, güvenlik başlıkları |
 | `test_boundary.py` | Sayfalama sınırları, bozuk parametre, uzun/unicode girdi, geçersiz sıralama |
 | `test_request_activities.py` | TP-797 kabul kriterleri (8 aksiyon metin şablonu + alan sözleşmesi) |
+| `test_crud_customers.py` | **mutating** — create/read/update/delete, çakışma, doğrulama, mass-assignment |
 
 Güvenlik ve sınır testlerinin tamamı **salt-okunur**; hiçbiri mutating istek atmaz ve
 OTP hız sınırına dokunmaz. Temel değişmez: geçersiz girdi **4xx** üretmeli, 5xx değil.

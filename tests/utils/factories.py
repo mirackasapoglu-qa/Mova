@@ -27,6 +27,18 @@ def gen_phone():
     return "+9053" + str(random.randint(10000000, 99999999))
 
 
+def gen_national_id():
+    """Checksum'i gecerli 11 haneli TC kimlik no.
+
+    OPRAS `customerKind: individual` icin `nationalId` zorunlu tutuyor ve
+    algoritmik dogrulama yapiyor — rastgele rakam kabul edilmiyor.
+    """
+    d = [random.randint(1, 9)] + [random.randint(0, 9) for _ in range(8)]
+    d10 = ((d[0] + d[2] + d[4] + d[6] + d[8]) * 7 - (d[1] + d[3] + d[5] + d[7])) % 10
+    d11 = (sum(d) + d10) % 10
+    return "".join(map(str, d)) + str(d10) + str(d11)
+
+
 def gen_code(prefix="QA"):
     """Benzersiz kod alanlari icin (projectCode, schoolCode vb.)."""
     return f"{prefix}-{unique_suffix()}"

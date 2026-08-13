@@ -362,6 +362,40 @@ olarak izleniyor, düzeltilince `XPASS` verip görünür olacak.
 
 Test: `test_security.py::test_security_headers` (`xfail`).
 
+## C9. Dokümante istek gövdesi canlıda reddediliyor — `POST /v1/customers`
+
+Koleksiyonun kendi dokümante ettiği örnek gövde gönderildiğinde **400** dönüyor:
+
+```
+POST /v1/customers  (sözleşmedeki örnek gövde)
+→ 400 ERR_VALIDATION
+   isVip alanı tanınmıyor.
+   fullName alanı tanınmıyor.
+   firstName alanı boş bırakılamaz.
+   lastName alanı boş bırakılamaz.
+   nationalId alanı boş bırakılamaz.
+```
+
+**Doküman kendi içinde de tutarsız:** örnek `customerKind: "individual"` diyor ama
+bir kurumsal alan olan `companyName` ve tanınmayan `fullName` gönderiyor.
+
+**Canlıdan keşfedilen gerçek sözleşme:**
+
+| | |
+|---|---|
+| Zorunlu | `customerKind` ∈ {`individual`, `corporate`} · `customerType` ∈ {`vip`, `school`, `corporate`, `sports_club`, `other`} |
+| `individual` için ek zorunlu | `firstName`, `lastName`, `nationalId` (TC checksum doğrulanıyor) |
+| Tanınmayan (reddedilen) | `fullName`, `isVip` |
+
+**Etki:** Dokümana bakarak istek kuran bir istemci doğrudan 400 alır. Doküman bir
+talimattır; örneği çalışmıyorsa entegrasyon rehberi olarak işlevsizdir.
+
+Test: `test_crud_customers.py::test_documented_example_is_accepted` (`xfail`).
+
+> **Olumlu bulgu:** API tanımsız alanları sessizce yutmuyor, açıkça reddediyor
+> (`forbidNonWhitelisted`). Mass-assignment denemesi de başarısız oldu — gövdede
+> gönderilen `tenantId` ve `id` kabul edilmedi. Güvenlik duruşu bu noktada doğru.
+
 ## Açık sorular
 
 - **Canlı ortam adresi** — `BASE_URL` henüz tanımlı değil; canlı koşum yapılamadı.
