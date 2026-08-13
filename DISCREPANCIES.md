@@ -2,12 +2,14 @@
 
 Kaynak: `OPRAS API.postman_collection.json` (391 request, 1041 kayıtlı örnek yanıt)
 Analiz: `contract/postman_to_openapi.py` → `contract/openapi.json` → envelope doğrulaması
-Tarih: 2026-08-12
+Tarih: 2026-08-12 (canlı koşum bulguları 2026-08-13'te eklendi)
 
-Bu belge **koleksiyon ile envelope sözleşmesi arasındaki** farkları listeler. Henüz
-canlı ortama karşı koşum yapılmadı (`BASE_URL` tanımlı değil); buradaki bulgular
-dokümanın kendi iç tutarlılığından çıkmıştır. Canlı koşum yapıldığında ikinci bir
-fark kümesi (doküman ↔ canlı) oluşacaktır.
+Belge iki bölümden oluşur:
+
+1. **Sözleşme iç tutarlılığı** (aşağıda) — koleksiyonun kendi envelope kurallarına
+   uyumu. Canlı ortam gerekmez.
+2. **Canlı koşum bulguları** (C1–C10) — `https://api.opras-test.site` dev ortamına
+   karşı doğrulanmış farklar.
 
 Makine tarafından okunan baseline: [`contract/envelope_exceptions.json`](./contract/envelope_exceptions.json)
 — `pytest -m schema` bu listeyi kullanır: listedeki sapmalar testi kırmaz, **listede
