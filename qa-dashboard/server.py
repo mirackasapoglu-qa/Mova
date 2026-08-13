@@ -51,6 +51,7 @@ from compare import compare_card_to_live
 import sys as _sys
 _sys.path.insert(0, str(pathlib.Path(__file__).parent.parent))
 from qa_core.resolver import PathParamResolver, PLACEHOLDER_ID  # noqa: E402
+from qa_core.rules import inventory as rules_inventory  # noqa: E402
 
 HERE = pathlib.Path(__file__).parent
 ROOT = HERE.parent
@@ -377,6 +378,12 @@ class Handler(BaseHTTPRequestHandler):
                 "jiraInTest": sum(1 for j in (c.get("jira") or [])
                                   if j.get("status") in ("Test", "Test Blocked")),
             } for c in cards])
+
+        if self.path == "/api/rules":
+            try:
+                return self._send(rules_inventory())
+            except Exception as exc:
+                return self._send({"error": f"kural envanteri okunamadi: {exc}"}, 500)
 
         if self.path == "/api/jira":
             payload = load_jira_cards()

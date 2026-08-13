@@ -122,6 +122,19 @@
   .desc { font-size: 13px; color: #c3cad6; max-height: 260px; overflow-y: auto;
           white-space: pre-wrap; line-height: 1.6; }
   details summary { cursor: pointer; }
+  .rcount { font-family: var(--mono); font-size: 11px; color: var(--accent);
+            border: 1px solid var(--accent); border-radius: 4px; padding: 0 5px; min-width: 24px;
+            text-align: center; }
+  td.rtag { white-space: nowrap; width: 1%; font-family: var(--mono); font-size: 11px;
+            color: var(--dim); }
+  .sev.check, .sev.kolon, .sev.diff, .sev.test, .sev.guard,
+  .sev.success, .sev.error, .sev.degisken { color: var(--dim); }
+  .kpis { display: flex; gap: 8px; margin-bottom: 14px; }
+  .kpi { flex: 1; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px;
+         background: var(--panel); }
+  .kpi .v { font-size: 20px; font-weight: 650; }
+  .kpi .l { font-size: 10px; color: var(--dim); text-transform: uppercase;
+            letter-spacing: .04em; margin-top: 2px; }
   .inline { display: flex; gap: 8px; align-items: center; }
 </style>
 </head>
@@ -134,6 +147,7 @@
   <div class="modes">
     <button class="mode on" data-mode="ep">Uçlar</button>
     <button class="mode" data-mode="jira">Jira kartları</button>
+    <button class="mode" data-mode="rules">Kurallar</button>
   </div>
   <button class="ghost" id="authBtn">Giriş</button>
 </header>
@@ -174,7 +188,7 @@
 
 <script>
 let CARDS = [], SEL = null, META = {};
-let MODE = "ep", JIRA = [], JSEL = null;
+let MODE = "ep", JIRA = [], JSEL = null, RULES = null, RSEL = 0;
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
@@ -208,7 +222,8 @@ async function boot() {
     $("#jtype").innerHTML = '<option value="">tüm tipler</option>'
       + ty.map(s => `<option>${esc(s)}</option>`).join("");
   }
-  if (location.hash === "#jira") { setMode("jira"); return; }
+  const hash = location.hash.slice(1);
+  if (["jira", "rules", "ep"].includes(hash)) { setMode(hash); return; }
   render();
 }
 
@@ -220,6 +235,7 @@ function setMode(mode) {
   $("#epFilters").style.display   = mode === "ep" ? "" : "none";
   $("#jiraFilters").style.display  = mode === "jira" ? "" : "none";
   $("#jiraFilters2").style.display = mode === "jira" ? "" : "none";
+  $("#q").style.display = mode === "rules" ? "none" : "";
   $("#q").placeholder = mode === "ep" ? "ara: path, özet, servis…"
                                       : "ara: TP-123, özet, atanan…";
   const empty = $("#detail").querySelector(".empty");
@@ -264,6 +280,77 @@ function renderJira() {
     + (rows.length > 400 ? `<div class="row s">… +${rows.length - 400} kart (aramayı daralt)</div>` : "");
   document.querySelectorAll("[data-j]").forEach(el =>
     el.onclick = () => openJira(el.dataset.j));
+}
+
+async function renderRules() {
+  if (!RULES) RULES = await api("/api/rules");
+  if (RULES.error) { $("#rows").innerHTML = `<div class="row s">${esc(RULES.error)}</div>`; return; }
+  const o = RULES.ozet;
+  $("#count").textContent = `${o.toplam} kural · ${o.testFonksiyonu} test fonksiyonu`;
+  $("#rows").innerHTML = RULES.setler.map((s, i) => `
+    <div class="row ${RSEL === i ? "sel" : ""}" data-r="${i}">
+      <div class="top">
+        <span class="rcount">${s.adet}</span>
+        <span style="flex:1">${esc(s.ad)}</span>
+        ${s.ag ? '<span class="jbadge" title="canlı ortam gerekir">ağ</span>' : ""}
+      </div>
+      <div class="s">${esc(s.kaynak)}</div>
+    </div>`).join("");
+  document.querySelectorAll("[data-r]").forEach(el =>
+    el.onclick = () => { RSEL = Number(el.dataset.r); renderRules(); openRuleSet(); });
+  openRuleSet();
+}
+
+function openRuleSet() {
+  const s = RULES.setler[RSEL];
+  const o = RULES.ozet;
+  const b = RULES.baseline;
+  $("#detail").innerHTML = `
+    <h2>${esc(s.ad)}</h2>
+    <div class="sub">${esc(s.kaynak)} · ${s.adet} kural ·
+      ${s.ag ? "canlı ortam gerekir" : "ağsız çalışır"}</div>
+
+    <div class="kpis">
+      <div class="kpi"><div class="v">${o.otomatikKural}</div><div class="l">otomatik kural</div></div>
+      <div class="kpi"><div class="v">${o.ajanKurali}</div><div class="l">ajan kuralı</div></div>
+      <div class="kpi"><div class="v">${o.testFonksiyonu}</div><div class="l">test fonksiyonu</div></div>
+      <div class="kpi"><div class="v">${b.toplam}</div><div class="l">baseline istisnası</div></div>
+    </div>
+
+    <section>
+      <h3>Ne yapar</h3>
+      <p style="margin:0;font-size:13px">${esc(s.aciklama)}</p>
+    </section>
+
+    <section>
+      <h3>Kurallar (${s.kurallar.length})</h3>
+      <table class="jt">${s.kurallar.map(r => `
+        <tr><td class="rtag"><span class="sev ${esc(r.etiket)}">${esc(r.etiket)}</span></td>
+            <td>${esc(r.metin)}</td></tr>`).join("")}</table>
+    </section>
+
+    <section>
+      <h3>Baseline — bilinen sapmalar</h3>
+      <p class="meta" style="margin:0 0 8px">Listedeki sapma testi kırmaz; listede
+        <b>olmayan yeni</b> bir sapma kırar. Düzelen sapma listede kalırsa da kırar.</p>
+      <table class="jt">${Object.entries(b.kategoriler).map(([k, n]) =>
+        `<tr><td class="rtag">${n}</td><td>${esc(k)}</td></tr>`).join("")}</table>
+    </section>
+
+    <section>
+      <h3>Kuralları uygulayan testler</h3>
+      <table class="jt">${RULES.testDosyalari.map(f => `
+        <tr><td class="rtag">${f.fonksiyon}</td>
+            <td><code>${esc(f.dosya)}</code></td>
+            <td class="ty">${f.agGerekir ? "canlı" : "ağsız"}</td>
+            <td class="ty">${esc((f.marker || []).join(", "))}</td></tr>`).join("")}</table>
+    </section>
+
+    <section>
+      <h3>pytest marker'ları</h3>
+      <table class="jt">${RULES.markerlar.map(m => `
+        <tr><td class="rtag"><code>${esc(m.ad)}</code></td><td>${esc(m.aciklama)}</td></tr>`).join("")}</table>
+    </section>`;
 }
 
 async function openJira(key) {
@@ -409,6 +496,7 @@ function filtered() {
 }
 
 function render() {
+  if (MODE === "rules") return renderRules();
   if (MODE === "jira") return renderJira();
   const rows = filtered();
   $("#count").textContent = rows.length + " / " + CARDS.length + " operasyon";
